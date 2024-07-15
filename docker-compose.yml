@@ -13,6 +13,12 @@ services:
     networks:
       - postgres
     restart: unless-stopped
+  mail-dev:
+    container_name: mail-dev-bsn
+    image: maildev/maildev
+    ports:
+      - 1080:1080
+      - 1025:1025
 
   pgadmin:
     container_name: pgadmin

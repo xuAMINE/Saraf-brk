@@ -1,6 +1,7 @@
 package com.saraf.security.user;
 
 import com.saraf.security.token.Token;
+import com.saraf.service.recipient.Recipient;
 import jakarta.persistence.*;
 
 import java.util.Collection;
@@ -31,12 +32,17 @@ public class User implements UserDetails {
   @Column(unique = true)
   private String email;
   private String password;
+  private boolean enabled;
 
   @Enumerated(EnumType.STRING)
   private Role role;
 
   @OneToMany(mappedBy = "user")
   private List<Token> tokens;
+
+  @OneToMany(mappedBy = "user")
+  private List<Recipient> recipients;
+
 
   @Override
   public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -70,6 +76,10 @@ public class User implements UserDetails {
 
   @Override
   public boolean isEnabled() {
-    return true;
+    return enabled;
+  }
+
+  public String getFullName() {
+    return firstname + " " + lastname;
   }
 }
