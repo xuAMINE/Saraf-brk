@@ -233,6 +233,7 @@ public class AuthenticationService {
             .orElseThrow(() -> new UsernameNotFoundException("User Not Found!"));
 
     user.setEnabled(true);
+
     repository.save(user);
     savedToken.setValidatedAt(LocalDateTime.now());
     verTokenRepository.save(savedToken);
