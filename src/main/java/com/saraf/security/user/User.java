@@ -1,5 +1,6 @@
 package com.saraf.security.user;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.saraf.security.token.Token;
 import com.saraf.service.recipient.Recipient;
 import jakarta.persistence.*;
@@ -40,9 +41,9 @@ public class User implements UserDetails {
   @OneToMany(mappedBy = "user")
   private List<Token> tokens;
 
-  @OneToMany(mappedBy = "user")
+  @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+  @JsonManagedReference
   private List<Recipient> recipients;
-
 
   @Override
   public Collection<? extends GrantedAuthority> getAuthorities() {

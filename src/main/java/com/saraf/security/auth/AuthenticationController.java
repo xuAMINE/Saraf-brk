@@ -50,9 +50,9 @@ public class AuthenticationController {
   }
 
   @GetMapping("/activate-account")
-  public ResponseEntity<String> activateAccount(@RequestParam String token) throws MessagingException {
+  public ResponseEntity<String> activateAccount(@RequestParam String verToken) throws MessagingException {
     try {
-      service.activateAccount(token);
+      service.activateAccount(verToken);
       return ResponseEntity.ok("Account activated successfully");
 
     } catch (InvalidTokenException | TokenExpiredException | IllegalArgumentException e) {

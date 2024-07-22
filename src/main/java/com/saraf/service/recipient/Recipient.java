@@ -1,5 +1,7 @@
 package com.saraf.service.recipient;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.saraf.security.user.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -25,5 +27,6 @@ public class Recipient {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
+    @JsonBackReference
     private User user;
 }

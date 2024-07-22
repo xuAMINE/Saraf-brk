@@ -17,15 +17,14 @@ import lombok.NoArgsConstructor;
 public class RegisterRequest {
 
   @NotEmpty(message = "first name should not be empty")
-  @Size(min = 4, message = "first name should be at least 8 characters long")
+  @Size(min = 3, message = "first name should be at least 3 characters long")
   private String firstname;
 
   @NotEmpty(message = "last name should not be empty")
-  @NotBlank(message = "last name should not be empty")
+  @Size(min = 3, message = "last name should be at least 3 characters long")
   private String lastname;
 
-  @NotEmpty(message = "email should not be empty")
-  @NotBlank(message = "email should not be empty")
+  @NotEmpty(message = "email can not be empty")
   @Email(message = "Please enter a correct email!")
   private String email;
 

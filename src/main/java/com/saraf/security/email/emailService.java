@@ -51,7 +51,7 @@ public class emailService {
         Context context = new Context();
         context.setVariables(properties);
 
-        mimeMessageHelper.setFrom("uhammudz@gmail.com");
+        mimeMessageHelper.setFrom("sarafbrk@gmail.com");
         mimeMessageHelper.setTo(to);
         mimeMessageHelper.setSubject(subject);
 
