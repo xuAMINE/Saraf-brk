@@ -14,6 +14,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
+@Table(name = "recipient",
+        uniqueConstraints = @UniqueConstraint(name = "unique_recipient_per_user", columnNames = {"user_id", "ccp"}))
 public class Recipient {
 
     @Id
