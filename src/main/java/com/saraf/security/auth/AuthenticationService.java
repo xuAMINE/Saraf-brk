@@ -10,6 +10,7 @@ import com.saraf.security.token.TokenRepository;
 import com.saraf.security.token.TokenType;
 import com.saraf.security.user.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.jsonwebtoken.JwtException;
 import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -201,7 +202,7 @@ public class AuthenticationService {
     userEmail = jwtService.extractUsername(refreshToken);
     if (userEmail != null) {
       var user = this.repository.findByEmail(userEmail)
-              .orElseThrow();
+              .orElseThrow(() -> new UsernameNotFoundException(userEmail + "User Not Found!"));
       if (jwtService.isTokenValid(refreshToken, user)) {
         var accessToken = jwtService.generateToken(user);
         revokeAllUserTokens(user);
@@ -237,5 +238,17 @@ public class AuthenticationService {
     repository.save(user);
     savedToken.setValidatedAt(LocalDateTime.now());
     verTokenRepository.save(savedToken);
+  }
+
+  public boolean isTokenValid(String token) {
+    try {
+      String userEmail = jwtService.extractUsername(token);
+      var user = this.repository.findByEmail(userEmail)
+              .orElseThrow(() -> new UsernameNotFoundException(userEmail + "User Not Found!"));
+      return jwtService.isTokenValid(token, user);
+    } catch (UsernameNotFoundException | JwtException e) {
+      // Log the exception and return false indicating the token is not valid
+      return false;
+    }
   }
 }

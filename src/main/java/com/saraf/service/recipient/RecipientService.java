@@ -9,7 +9,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -19,9 +19,9 @@ public class RecipientService {
     private final UserRepository userRepository;
 
     @PreAuthorize("hasRole('USER')")
-    public Recipient addRecipient(AddRecipientRequest request) {
+    public Recipient addRecipient(RecipientRequest request) {
 
-        var user = getUser();
+        var user = GetCurrentUser();
 
         Recipient recipient = new Recipient();
         recipient.setFirstname(request.getFirstName());
@@ -33,10 +33,19 @@ public class RecipientService {
         return recipientRepository.save(recipient);
     }
 
-    private User getUser() {
+    private User GetCurrentUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = authentication.getName();
         return userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException(email));
+    }
+
+    public List<Recipient> getRecipientsForCurrentUser() {
+        Integer userId = GetCurrentUser().getId();
+        return recipientRepository.findByUserId(userId);
+    }
+
+    public List<Recipient> getAllRecipients() {
+        return recipientRepository.findAll();
     }
 }

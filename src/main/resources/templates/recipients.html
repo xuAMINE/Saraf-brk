@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container">
+    <div class="row">
+        <div th:each="recipient : ${recipients}" class="col-lg-6 col-12">
+            <div class="card card-profile mt-lg-5 mt-5">
+                <div class="row align-items-center">
+                    <div class="col-lg-4 col-md-6 col-6 mt-n5">
+                        <a href="javascript:;">
+                            <div class="p-3 pe-md-0">
+                                <img class="w-100 border-radius-md shadow-lg" src="../assets/img/bruce-mars.jpg" alt="image">
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-lg-8 col-md-6 col-6 mt-n5">
+                        <div class="card-body ps-lg-5">
+                            <h5 class="mb-0 profile-text" th:text="${recipient.firstname + ' ' + recipient.lastname}">Recipient Name</h5>
+                            <h6 class="ccp text-info profile-text-b2" th:text="${recipient.ccp}">Recipient CCP</h6>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

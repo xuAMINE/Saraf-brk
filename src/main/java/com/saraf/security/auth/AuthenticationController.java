@@ -10,6 +10,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,6 +19,7 @@ import java.io.IOException;
 @RestController
 @RequestMapping("/api/v1/auth")
 @RequiredArgsConstructor
+
 public class AuthenticationController {
 
   private final AuthenticationService service;
@@ -66,6 +68,17 @@ public class AuthenticationController {
   public ResponseEntity<?> resendVerification(@RequestBody ResendVerificationRequest request) throws MessagingException {
     service.resendEmailVerification(request.getEmail());
     return ResponseEntity.ok("Verification email resent successfully.");
+  }
+
+  @GetMapping("/verify-token")
+  public ResponseEntity<Boolean> verifyToken(@RequestHeader("Authorization") String bearerToken) {
+    if (bearerToken == null || !bearerToken.startsWith("Bearer ")) {
+      return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(false);
+    }
+
+    String token = bearerToken.substring(7);
+    boolean isValid = service.isTokenValid(token);
+    return ResponseEntity.ok(isValid);
   }
 
 }
