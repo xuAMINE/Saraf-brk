@@ -66,6 +66,11 @@ public class SecurityConfiguration {
                                 .anyRequest()
                                 .authenticated()
                 )
+                /*.oauth2Login(oauth2 -> oauth2
+                        .loginPage("/login")  // Your custom login page
+                        .defaultSuccessUrl("/home", true)  // Redirect after successful login
+                        .failureUrl("/login?error=true")  // Redirect on failure
+                )*/
                 .sessionManagement(session -> session.sessionCreationPolicy(STATELESS))
                 .authenticationProvider(authenticationProvider)
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)

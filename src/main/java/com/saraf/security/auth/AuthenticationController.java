@@ -1,8 +1,10 @@
 package com.saraf.security.auth;
 
+import com.saraf.security.config.JwtService;
 import com.saraf.security.email.ResendVerificationRequest;
 import com.saraf.security.exception.InvalidTokenException;
 import com.saraf.security.exception.TokenExpiredException;
+import com.saraf.security.user.User;
 import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -23,10 +25,14 @@ import java.io.IOException;
 public class AuthenticationController {
 
   private final AuthenticationService service;
+  private final JwtService jwtService;
 
   @PostMapping("/register")
   public ResponseEntity<?> register(@RequestBody @Valid RegisterRequest request) {
     try {
+      if (service.userExists(request.getEmail())) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body("Email already exists");
+      }
       return ResponseEntity.ok(service.register(request));
     } catch (Exception e) {
       return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred");
@@ -70,15 +76,14 @@ public class AuthenticationController {
     return ResponseEntity.ok("Verification email resent successfully.");
   }
 
-  @GetMapping("/verify-token")
-  public ResponseEntity<Boolean> verifyToken(@RequestHeader("Authorization") String bearerToken) {
-    if (bearerToken == null || !bearerToken.startsWith("Bearer ")) {
-      return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(false);
+  @GetMapping("/check-session")
+  public ResponseEntity<?> checkSession(@RequestHeader("Authorization") String token) {
+    String jwt = token.replace("Bearer ", "");
+    if (jwtService.isTokenValid(jwt)) {
+      return ResponseEntity.ok(true);
+    } else {
+      return ResponseEntity.status(401).body(false);
     }
-
-    String token = bearerToken.substring(7);
-    boolean isValid = service.isTokenValid(token);
-    return ResponseEntity.ok(isValid);
   }
 
 }

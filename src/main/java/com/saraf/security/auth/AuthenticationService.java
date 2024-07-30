@@ -219,15 +219,15 @@ public class AuthenticationService {
   @Transactional
   public void activateAccount(String token) throws MessagingException {
     if (token == null || token.isEmpty()) {
-      throw new IllegalArgumentException("Token must not be empty");
+      throw new IllegalArgumentException("Code can not be empty");
     }
 
     VerToken savedToken = verTokenRepository.findByToken(token)
-            .orElseThrow(() -> new InvalidTokenException("Invalid token"));
+            .orElseThrow(() -> new InvalidTokenException("Invalid code please try again"));
 
     if (!savedToken.isActive()) {
       resendEmailVerification(savedToken.getUser().getEmail());
-      throw new TokenExpiredException("token expired");
+      throw new TokenExpiredException("code has expired. Please click on \"Resend Email\" to receive a new one.");
     }
 
     var user = repository.findById(savedToken.getUser().getId())
@@ -240,15 +240,7 @@ public class AuthenticationService {
     verTokenRepository.save(savedToken);
   }
 
-  public boolean isTokenValid(String token) {
-    try {
-      String userEmail = jwtService.extractUsername(token);
-      var user = this.repository.findByEmail(userEmail)
-              .orElseThrow(() -> new UsernameNotFoundException(userEmail + "User Not Found!"));
-      return jwtService.isTokenValid(token, user);
-    } catch (UsernameNotFoundException | JwtException e) {
-      // Log the exception and return false indicating the token is not valid
-      return false;
-    }
+  public boolean userExists(String email) {
+    return repository.existsByEmail(email);
   }
 }

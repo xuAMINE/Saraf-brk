@@ -4,5 +4,29 @@ spring:
   servlet:
     multipart:
       max-file-size: 50MB
+
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: 1037401552789-vn06f7ljj1l57bol582pgpru6gfdi98d.apps.googleusercontent.com
+            client-secret: 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
+            scope: profile, email
+            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+          facebook:
+            client-id: 695445419432041
+            client-secret: d5e239e538014443166daf00325c96e0
+            scope: public_profile, email
+            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+          github:
+            client-id: Ov23lielHDC0fn8yQ31Z
+            client-secret: be7ad3e44e6aafcd0a84d75de3e3e75eb8c29889
+            scope: read:user
+            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+
 springdoc:
   default-produces-media-type: application/json
+
+
+

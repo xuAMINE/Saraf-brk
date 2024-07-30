@@ -1,5 +1,8 @@
 package com.saraf.security.config;
 
+import com.saraf.security.token.Token;
+import com.saraf.security.token.TokenRepository;
+import com.saraf.security.user.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -11,11 +14,13 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class JwtService {
 
   @Value("${application.security.jwt.secret-key}")
@@ -24,6 +29,9 @@ public class JwtService {
   private long jwtExpiration;
   @Value("${application.security.jwt.refresh-token.expiration}")
   private long refreshExpiration;
+
+  private final TokenRepository tokenRepository;
+
 
   public String extractUsername(String token) {
     return extractClaim(token, Claims::getSubject);
@@ -71,6 +79,11 @@ public class JwtService {
     return (username.equals(userDetails.getUsername())) && !isTokenExpired(token);
   }
 
+  public boolean isTokenValid(String token) {
+    var tokenEntity = tokenRepository.findByToken(token).orElse(null);
+    return tokenEntity != null && !tokenEntity.isExpired() && !tokenEntity.isRevoked() && !isTokenExpired(token);
+  }
+
   private boolean isTokenExpired(String token) {
     return extractExpiration(token).before(new Date());
   }
@@ -92,4 +105,5 @@ public class JwtService {
     byte[] keyBytes = Decoders.BASE64.decode(secretKey);
     return Keys.hmacShaKeyFor(keyBytes);
   }
+
 }
