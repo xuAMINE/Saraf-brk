@@ -21,6 +21,7 @@ public class RecipientRequest {
     @Size(min = 3, message = "last name should be at least 3 characters long")
     private String lastName;
     @NotEmpty
+    @Size(min = 11, message = "Please Enter a valid CCP number")
     private String ccp;
     private String phoneNumber;
     private boolean doContact;

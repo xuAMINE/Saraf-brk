@@ -18,10 +18,9 @@ public class RecipientService {
     private final RecipientRepository recipientRepository;
     private final UserRepository userRepository;
 
-    @PreAuthorize("hasRole('USER')")
     public Recipient addRecipient(RecipientRequest request) {
 
-        var user = GetCurrentUser();
+        var user = getCurrentUser();
 
         Recipient recipient = new Recipient();
         recipient.setFirstname(request.getFirstName());
@@ -33,7 +32,7 @@ public class RecipientService {
         return recipientRepository.save(recipient);
     }
 
-    private User GetCurrentUser() {
+    private User getCurrentUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = authentication.getName();
         return userRepository.findByEmail(email)
@@ -41,7 +40,7 @@ public class RecipientService {
     }
 
     public List<Recipient> getRecipientsForCurrentUser() {
-        Integer userId = GetCurrentUser().getId();
+        Integer userId = getCurrentUser().getId();
         return recipientRepository.findByUserId(userId);
     }
 

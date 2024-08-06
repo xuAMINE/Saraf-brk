@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+@Getter
 @RequiredArgsConstructor
 public enum Role {
 
@@ -32,11 +33,8 @@ public enum Role {
                   Permission.MANAGER_DELETE,
                   Permission.MANAGER_CREATE
           )
-  )
+  );
 
-  ;
-
-  @Getter
   private final Set<Permission> permissions;
 
   public List<SimpleGrantedAuthority> getAuthorities() {

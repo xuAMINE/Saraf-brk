@@ -11,7 +11,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/recipient")
-@PreAuthorize("hasRole('USER')")
 @RequiredArgsConstructor
 public class RecipientController {
 
@@ -33,6 +32,11 @@ public class RecipientController {
     @GetMapping("/current-user")
     public List<Recipient> getRecipientsForCurrentUser() {
         return recipientService.getRecipientsForCurrentUser();
+    }
+
+    @GetMapping("hello")
+    public String hello() {
+        return "hello";
     }
 
 

@@ -8,4 +8,6 @@ public interface RecipientRepository extends JpaRepository<Recipient, Integer> {
 
     List<Recipient> findByUserId(Integer id);
 
+    Recipient findByCcp(String ccp);
+
 }
