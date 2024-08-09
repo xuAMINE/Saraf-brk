@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/v1/rate")
 @RequiredArgsConstructor
-public class RateController {
+public class ExchangeRateController {
 
     private final ExchangeRateService ExchangeRateService;
 

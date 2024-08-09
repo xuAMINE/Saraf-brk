@@ -20,11 +20,11 @@ public class UserService {
 
         // check if the current password is correct
         if (!passwordEncoder.matches(request.getCurrentPassword(), user.getPassword())) {
-            throw new IllegalStateException("Wrong password");
+            throw new IllegalStateException("Incorrect password");
         }
         // check if the two new passwords are the same
         if (!request.getNewPassword().equals(request.getConfirmationPassword())) {
-            throw new IllegalStateException("Password are not the same");
+            throw new IllegalStateException("Passwords doesn't match");
         }
 
         // update the password

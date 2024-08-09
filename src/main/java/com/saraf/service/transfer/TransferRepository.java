@@ -10,8 +10,10 @@ import java.util.List;
 @Repository
 public interface TransferRepository extends JpaRepository<Transfer, Integer> {
 
-    @Query("SELECT new com.saraf.service.transfer.TransferDTO(t.id, t.amount, t.amountReceived, t.status, t.transferDate, CONCAT(r.firstname, ' ', r.lastname)) " +
-            "FROM Transfer t JOIN t.recipient r WHERE t.user.id = :userId ORDER BY t.transferDate DESC")
+    @Query("SELECT new com.saraf.service.transfer.TransferDTO(t.id, t.amount, t.amountReceived, t.status, t.transferDate, " +
+            "CASE WHEN r IS NULL THEN 'One Time Transfer' ELSE CONCAT(r.firstname, ' ', r.lastname) END) " +
+            "FROM Transfer t LEFT JOIN t.recipient r WHERE t.user.id = :userId ORDER BY t.transferDate DESC")
     List<TransferDTO> findTransfersByUserId(@Param("userId") Integer userId);
+
 
 }

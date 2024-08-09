@@ -4,7 +4,6 @@ import com.saraf.security.user.User;
 import com.saraf.security.user.UserRepository;
 import com.saraf.service.rate.ExchangeRate;
 import com.saraf.service.rate.ExchangeRateRepository;
-import com.saraf.service.rate.Rate;
 import com.saraf.service.recipient.RecipientRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
@@ -37,10 +36,10 @@ public class TransferService {
         Transfer transfer = new Transfer();
         transfer.setAmount(request.getAmount());
         transfer.setAmountReceived(request.getAmount().multiply(BigDecimal.valueOf(DZDtoUSD)));
-        transfer.setStatus(Status.PROCESSING);
+        transfer.setStatus(Status.PENDING);
         transfer.setTransferDate(LocalDate.now());
         transfer.setUser(user);
-        transfer.setRecipient(recipientRepository.findByCcp(request.getCcp()));
+        transfer.setRecipient(recipientRepository.findByUserIdAndAndCcp(getCurrentUser().getId(), request.getCcp()));
 
         return transferRepository.save(transfer);
     }

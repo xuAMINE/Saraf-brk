@@ -6,6 +6,7 @@ import com.saraf.security.user.Role;
 import com.saraf.security.user.RoleService;
 import com.saraf.security.user.User;
 import com.saraf.security.user.UserRepository;
+import com.saraf.service.rate.ExchangeRateService;
 import com.saraf.service.recipient.Recipient;
 import com.saraf.service.recipient.RecipientRequest;
 import com.saraf.service.recipient.RecipientService;
@@ -42,7 +43,8 @@ public class SarafApplication {
 			RecipientService recipientService,
 			AuthenticationManager authenticationManager,
 			UserRepository userRepository,
-			TransferService transferService
+			TransferService transferService,
+			ExchangeRateService exchangeRateService
 	) {
 		return args -> {
 			var admin = RegisterRequest.builder()
@@ -72,6 +74,8 @@ public class SarafApplication {
 					.doContact(true)
 					.build();
 			recipientService.addRecipient(recipient);
+
+			exchangeRateService.updateRate(215);
 
 			var transfer = TransferRequest.builder()
 					.amount(BigDecimal.valueOf(400))
