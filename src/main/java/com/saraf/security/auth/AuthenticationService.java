@@ -91,17 +91,17 @@ public class AuthenticationService {
   }
 
   private void invalidateUserVerTokens(User user) {
-    List<VerToken> activeTokens = verTokenRepository.findAllActiveTokensByUser(user.getId());
+    List<VerificationToken> activeTokens = verTokenRepository.findAllActiveTokensByUser(user.getId());
 
-    for (VerToken verToken : activeTokens) {
-      verToken.markAsExpired();
-      verTokenRepository.save(verToken);
+    for (VerificationToken verificationToken : activeTokens) {
+      verificationToken.markAsExpired();
+      verTokenRepository.save(verificationToken);
     }
   }
 
   private String generateAndSaveActivationToken(User user) {
     String generatedToken = generateActivationCode(6);
-    var verToken = VerToken.builder()
+    var verToken = VerificationToken.builder()
             .token(generatedToken)
             .created(LocalDateTime.now())
             .expires(LocalDateTime.now().plusMinutes(15))
@@ -217,12 +217,12 @@ public class AuthenticationService {
   }
 
   @Transactional
-  public void activateAccount(String token) throws MessagingException {
+  public boolean activateAccount(String token) throws MessagingException {
     if (token == null || token.isEmpty()) {
       throw new IllegalArgumentException("Code can not be empty");
     }
 
-    VerToken savedToken = verTokenRepository.findByToken(token)
+    VerificationToken savedToken = verTokenRepository.findByToken(token)
             .orElseThrow(() -> new InvalidTokenException("Invalid code please try again"));
 
     if (!savedToken.isActive()) {
@@ -238,6 +238,7 @@ public class AuthenticationService {
     repository.save(user);
     savedToken.setValidatedAt(LocalDateTime.now());
     verTokenRepository.save(savedToken);
+    return true;
   }
 
   public boolean userExists(String email) {

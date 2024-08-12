@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-public class VerToken {
+public class VerificationToken {
 
     @Id
     @GeneratedValue

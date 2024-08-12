@@ -13,7 +13,12 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public enum Role {
 
-  USER(Collections.emptySet()),
+  USER(Set.of(
+          Permission.USER_READ,
+          Permission.USER_UPDATE,
+          Permission.USER_DELETE,
+          Permission.USER_CREATE
+  )),
   ADMIN(
           Set.of(
                   Permission.ADMIN_READ,

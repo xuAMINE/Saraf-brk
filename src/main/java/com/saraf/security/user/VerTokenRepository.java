@@ -7,11 +7,11 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 import java.util.Optional;
 
-public interface VerTokenRepository extends JpaRepository<VerToken, Integer> {
+public interface VerTokenRepository extends JpaRepository<VerificationToken, Integer> {
 
-    Optional<VerToken> findByToken(String token);
+    Optional<VerificationToken> findByToken(String token);
 
-    @Query("SELECT t FROM VerToken t WHERE t.user.id = :userId AND t.validatedAt IS NULL AND t.expires > CURRENT_TIMESTAMP")
-    List<VerToken> findAllActiveTokensByUser(@Param("userId") Integer userId);
+    @Query("SELECT t FROM VerificationToken t WHERE t.user.id = :userId AND t.validatedAt IS NULL AND t.expires > CURRENT_TIMESTAMP")
+    List<VerificationToken> findAllActiveTokensByUser(@Param("userId") Integer userId);
 
 }

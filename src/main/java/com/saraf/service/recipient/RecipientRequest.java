@@ -14,14 +14,14 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class RecipientRequest {
 
-    @NotEmpty(message = "first name should not be empty")
-    @Size(min = 3, message = "first name should be at least 3 characters long")
+    @NotEmpty(message = "Please provide first and last Name.")
+    @Size(min = 3, message = "Name should be at least 3 characters long.")
     private String firstName;
-    @NotEmpty(message = "last name should not be empty")
-    @Size(min = 3, message = "last name should be at least 3 characters long")
+    @NotEmpty(message = "Please provide first and last Name.")
+    @Size(min = 3, message = "Name should be at least 3 characters long.")
     private String lastName;
-    @NotEmpty
-    @Size(min = 11, message = "Please Enter a valid CCP number")
+    @NotEmpty(message = "CCP cannot be left empty.")
+    @Size(min = 11, message = "Please Enter a valid CCP number.")
     private String ccp;
     private String phoneNumber;
     private boolean doContact;

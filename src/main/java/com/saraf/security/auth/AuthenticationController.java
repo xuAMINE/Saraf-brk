@@ -58,15 +58,19 @@ public class AuthenticationController {
   }
 
   @GetMapping("/activate-account")
-  public ResponseEntity<String> activateAccount(@RequestParam String verToken) throws MessagingException {
+  public ResponseEntity<String> activateAccount(@RequestParam String verToken, HttpServletResponse response) throws MessagingException {
     try {
-      service.activateAccount(verToken);
+      boolean isActivated = service.activateAccount(verToken);
+      if (isActivated)
+        response.sendRedirect("http://127.0.0.1:5501/Saraf-BRK/pages/account-activated.html");
       return ResponseEntity.ok("Account activated successfully");
 
     } catch (InvalidTokenException | TokenExpiredException | IllegalArgumentException e) {
       return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
     } catch (RuntimeException e) {
       return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to activate account");
+    } catch (IOException e) {
+        throw new RuntimeException(e);
     }
   }
 

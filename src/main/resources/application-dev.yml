@@ -39,7 +39,7 @@ application:
         expiration: 604800000 # 7 days
   mailing:
     frontend:
-      activation-url: http://localhost:8088/api/v1/auth/activate-account?token=
+      activation-url: http://localhost:8088/api/v1/auth/activate-account?verToken=
   file:
     uploads:
       photos-output-path: ./uploads
