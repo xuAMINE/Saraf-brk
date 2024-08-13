@@ -55,4 +55,5 @@ public class TransferService {
         return userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException(email));
     }
+
 }

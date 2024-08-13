@@ -3,8 +3,6 @@ package com.saraf.service.recipient;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,6 +14,12 @@ public class RecipientController {
 
     private final RecipientService recipientService;
 
+    @GetMapping
+    public ResponseEntity<List<Recipient>> getRecipients() {
+        List<Recipient> recipients = recipientService.getAllRecipients();
+        return ResponseEntity.ok(recipients);
+    }
+
     @PostMapping("/add")
     public ResponseEntity<Recipient> addRecipient(@RequestBody @Valid RecipientRequest request) {
         Recipient recipient = recipientService.addRecipient(request);
@@ -23,10 +27,10 @@ public class RecipientController {
         // Catch UsernameNotFoundException
     }
 
-    @GetMapping
-    public ResponseEntity<List<Recipient>> getRecipients() {
-        List<Recipient> recipients = recipientService.getAllRecipients();
-        return ResponseEntity.ok(recipients);
+    @PutMapping("/{ccp}")
+    public ResponseEntity<Recipient> editRecipient(@PathVariable String ccp, @RequestBody @Valid EditRecipientRequest request) {
+        Recipient recipient = recipientService.editRecipient(ccp, request);
+        return ResponseEntity.ok(recipient);
     }
 
     @GetMapping("/current-user")
@@ -34,10 +38,10 @@ public class RecipientController {
         return recipientService.getRecipientsForCurrentUser();
     }
 
-    @GetMapping("hello")
-    public String hello() {
-        return "hello";
+    @PutMapping("/deactivate/{ccp}")
+    public ResponseEntity<Void> deactivateRecipientByCcp(@PathVariable String ccp) {
+        recipientService.deactivateRecipient(ccp);
+        return ResponseEntity.noContent().build();
     }
-
 
 }

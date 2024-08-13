@@ -29,6 +29,7 @@ public class Recipient {
     private String ccp;
     private String phoneNumber;
     private boolean doContact;
+    private boolean isActive = true;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
