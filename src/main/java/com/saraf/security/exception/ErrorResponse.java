@@ -1,5 +1,8 @@
 package com.saraf.security.exception;
 
+import lombok.Data;
+
+@Data
 public class ErrorResponse {
     private String message;
 
@@ -7,11 +10,4 @@ public class ErrorResponse {
         this.message = message;
     }
 
-    public String getMessage() {
-        return message;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
-    }
 }

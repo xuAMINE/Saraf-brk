@@ -1,6 +1,7 @@
 package com.saraf.security.auth;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.saraf.security.user.Role;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -17,4 +18,5 @@ public class AuthenticationResponse {
   @JsonProperty("refresh_token")
   private String refreshToken;
   private String message;
+  private Role role;
 }

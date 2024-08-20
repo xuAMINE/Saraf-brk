@@ -1,5 +1,7 @@
 package com.saraf.security.exception;
 
+import com.saraf.security.admin.ApiResponse;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -55,4 +57,20 @@ public class GlobalExceptionHandler {
         ErrorResponse ErrResponse = new ErrorResponse(ex.getMessage());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ErrResponse);
     }
+
+    @ExceptionHandler(TransferNotFoundException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<ApiResponse> handleTransferNotFoundException(TransferNotFoundException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse(false, "Transfer not found"));
+    }
+
+    @ExceptionHandler(ExpiredJwtException.class)
+    @ResponseStatus(HttpStatus.BAD_GATEWAY)
+    public ResponseEntity<ErrorResponse> handleExpiredJwtException(ExpiredJwtException ex) {
+        ErrorResponse ErrResponse = new ErrorResponse(ex.getMessage());
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(ErrResponse);
+    }
+
+
+
 }

@@ -61,7 +61,8 @@ public class AuthenticationService {
     sendValidationEmail(user);
     return AuthenticationResponse.builder()
         .accessToken(jwtToken)
-            .refreshToken(refreshToken)
+        .refreshToken(refreshToken)
+        .role(user.getRole())
         .build();
   }
 
@@ -158,11 +159,13 @@ public class AuthenticationService {
 
     var jwtToken = jwtService.generateToken(user);
     var refreshToken = jwtService.generateRefreshToken(user);
+    Role role = jwtService.getUserRoleFromToken(jwtToken.replace("Bearer ", ""));
     revokeAllUserTokens(user);
     saveUserToken(user, jwtToken);
     return AuthenticationResponse.builder()
         .accessToken(jwtToken)
         .refreshToken(refreshToken)
+        .role(role)
         .build();
   }
 

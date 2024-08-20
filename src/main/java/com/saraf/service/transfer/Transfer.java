@@ -1,6 +1,7 @@
 package com.saraf.service.transfer;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.saraf.security.user.User;
 import com.saraf.service.recipient.Recipient;
@@ -31,6 +32,7 @@ public class Transfer {
     private Status status;
 
     private LocalDate transferDate;
+    private String receipt;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
@@ -39,7 +41,7 @@ public class Transfer {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "recipient_id")
-    @JsonManagedReference
+    @JsonIgnore
     private Recipient recipient;
 
 }
