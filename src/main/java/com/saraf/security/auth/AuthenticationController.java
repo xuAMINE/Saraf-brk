@@ -1,9 +1,11 @@
 package com.saraf.security.auth;
 
+import com.saraf.security.admin.ApiResponse;
 import com.saraf.security.config.JwtService;
 import com.saraf.security.email.ResendVerificationRequest;
 import com.saraf.security.exception.InvalidTokenException;
 import com.saraf.security.exception.TokenExpiredException;
+import com.saraf.security.user.Role;
 import com.saraf.security.user.User;
 import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -83,7 +85,10 @@ public class AuthenticationController {
   @GetMapping("/check-session")
   public ResponseEntity<?> checkSession(@RequestHeader("Authorization") String token) {
     String jwt = token.replace("Bearer ", "");
+    Role role = jwtService.getUserRoleFromToken(jwt);
     if (jwtService.isTokenValid(jwt)) {
+      if (role.equals(Role.ADMIN) || role.equals(Role.MANAGER))
+        return ResponseEntity.ok("Admin session valid");
       return ResponseEntity.ok(true);
     } else {
       return ResponseEntity.status(401).body(false);

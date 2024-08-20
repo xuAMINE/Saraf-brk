@@ -1,13 +1,12 @@
 package com.saraf.service.transfer;
 
-import com.saraf.security.exception.InvalidTransferCredException;
+import com.saraf.security.admin.s3.S3Service;
+import com.saraf.security.exception.TransferNotFoundException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 @RestController
@@ -16,10 +15,10 @@ import java.util.List;
 public class TransferController {
 
     private final TransferService transferService;
+    private final S3Service s3Service;
 
     @PostMapping("/add")
     public ResponseEntity<Transfer> add(@RequestBody TransferRequest request) {
-
         Transfer transfer = transferService.addTransfer(request);
         return ResponseEntity.ok(transfer);
     }
@@ -34,4 +33,12 @@ public class TransferController {
     public ResponseEntity<String> checkTransferCredentials(@RequestBody @Valid TransferRequest request) {
         return ResponseEntity.ok("ok");
     }
+
+    @GetMapping("/receipt/{id}")
+    public ResponseEntity<String> getFileUrl(@PathVariable Integer id) {
+        String fileName = transferService.getReceiptName(id);
+        String url = s3Service.generatePreSignedUrl(fileName, 10);
+        return ResponseEntity.ok(url);
+    }
+
 }

@@ -2,7 +2,9 @@ package com.saraf.security.config;
 
 import com.saraf.security.token.Token;
 import com.saraf.security.token.TokenRepository;
+import com.saraf.security.user.Role;
 import com.saraf.security.user.User;
+import com.saraf.security.user.UserRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -12,10 +14,13 @@ import java.security.Key;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -31,6 +36,7 @@ public class JwtService {
   private long refreshExpiration;
 
   private final TokenRepository tokenRepository;
+  private final UserRepository userRepository;
 
 
   public String extractUsername(String token) {
@@ -82,6 +88,12 @@ public class JwtService {
   public boolean isTokenValid(String token) {
     var tokenEntity = tokenRepository.findByToken(token).orElse(null);
     return tokenEntity != null && !tokenEntity.isExpired() && !tokenEntity.isRevoked() && !isTokenExpired(token);
+  }
+
+  public Role getUserRoleFromToken(String token) {
+    String email = extractUsername(token);
+    var user =  userRepository.findByEmail(email);
+    return user.get().getRole();
   }
 
   private boolean isTokenExpired(String token) {
