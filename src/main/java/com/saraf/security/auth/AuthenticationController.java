@@ -3,6 +3,7 @@ package com.saraf.security.auth;
 import com.saraf.security.admin.ApiResponse;
 import com.saraf.security.config.JwtService;
 import com.saraf.security.email.ResendVerificationRequest;
+import com.saraf.security.exception.EmailValidationException;
 import com.saraf.security.exception.InvalidTokenException;
 import com.saraf.security.exception.TokenExpiredException;
 import com.saraf.security.user.Role;
@@ -23,7 +24,6 @@ import java.io.IOException;
 @RestController
 @RequestMapping("/api/v1/auth")
 @RequiredArgsConstructor
-
 public class AuthenticationController {
 
   private final AuthenticationService service;
@@ -67,7 +67,7 @@ public class AuthenticationController {
         response.sendRedirect("http://127.0.0.1:5501/Saraf-BRK/pages/account-activated.html");
       return ResponseEntity.ok("Account activated successfully");
 
-    } catch (InvalidTokenException | TokenExpiredException | IllegalArgumentException e) {
+    } catch (EmailValidationException e) {
       return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
     } catch (RuntimeException e) {
       return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to activate account");
