@@ -1,22 +1,18 @@
 package com.saraf.security.auth;
 
 import com.saraf.security.config.JwtService;
+import com.saraf.security.email.EmailService;
 import com.saraf.security.email.EmailTemplateName;
-import com.saraf.security.email.emailService;
 import com.saraf.security.exception.EmailValidationException;
-import com.saraf.security.exception.InvalidTokenException;
-import com.saraf.security.exception.TokenExpiredException;
 import com.saraf.security.token.Token;
 import com.saraf.security.token.TokenRepository;
 import com.saraf.security.token.TokenType;
 import com.saraf.security.user.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.jsonwebtoken.JwtException;
 import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
@@ -42,7 +38,7 @@ public class AuthenticationService {
   private final PasswordEncoder passwordEncoder;
   private final JwtService jwtService;
   private final AuthenticationManager authenticationManager;
-  private final com.saraf.security.email.emailService emailService;
+  private final EmailService emailService;
 
   @Value("${application.mailing.frontend.activation-url}")
   private String activationUrl;
@@ -239,6 +235,7 @@ public class AuthenticationService {
     if (user.isEnabled()) {
       throw new EmailValidationException("Account is already activated, please head to login page.");
     }
+
     user.setEnabled(true);
 
     repository.save(user);

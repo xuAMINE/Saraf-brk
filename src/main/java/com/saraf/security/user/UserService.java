@@ -1,5 +1,6 @@
 package com.saraf.security.user;
 
+import com.saraf.security.email.EmailService;
 import com.saraf.security.email.EmailTemplateName;
 import com.saraf.security.user.forgot_password.ForgotPasswordRequest;
 import com.saraf.security.user.forgot_password.PasswordResetToken;
@@ -21,7 +22,7 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final UserRepository repository;
     private final PasswordResetTokenRepository resetTokenRepository;
-    private final com.saraf.security.email.emailService emailService;
+    private final EmailService emailService;
 
     public void changePassword(ChangePasswordRequest request, Principal connectedUser) {
 

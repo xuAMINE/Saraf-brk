@@ -19,8 +19,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
-@Import(RecipientRepositoryTest.TestConfig.class)
-@EnableJpaRepositories(basePackageClasses = {RecipientRepository.class, UserRepository.class})
 class RecipientRepositoryTest {
 
     @Autowired

@@ -19,26 +19,30 @@ public enum Role {
           Permission.USER_DELETE,
           Permission.USER_CREATE
   )),
-  ADMIN(
-          Set.of(
-                  Permission.ADMIN_READ,
-                  Permission.ADMIN_UPDATE,
-                  Permission.ADMIN_DELETE,
-                  Permission.ADMIN_CREATE,
-                  Permission.MANAGER_READ,
-                  Permission.MANAGER_UPDATE,
-                  Permission.MANAGER_DELETE,
-                  Permission.MANAGER_CREATE
-          )
-  ),
-  MANAGER(
-          Set.of(
-                  Permission.MANAGER_READ,
-                  Permission.MANAGER_UPDATE,
-                  Permission.MANAGER_DELETE,
-                  Permission.MANAGER_CREATE
-          )
-  );
+  ADMIN(Set.of(
+          Permission.ADMIN_READ,
+          Permission.ADMIN_UPDATE,
+          Permission.ADMIN_DELETE,
+          Permission.ADMIN_CREATE,
+          Permission.MANAGER_READ,
+          Permission.MANAGER_UPDATE,
+          Permission.MANAGER_DELETE,
+          Permission.MANAGER_CREATE,
+          Permission.USER_READ,
+          Permission.USER_UPDATE,
+          Permission.USER_DELETE,
+          Permission.USER_CREATE
+  )),
+  MANAGER(Set.of(
+          Permission.MANAGER_READ,
+          Permission.MANAGER_UPDATE,
+          Permission.MANAGER_DELETE,
+          Permission.MANAGER_CREATE,
+          Permission.USER_READ,
+          Permission.USER_UPDATE,
+          Permission.USER_DELETE,
+          Permission.USER_CREATE
+  ));
 
   private final Set<Permission> permissions;
 

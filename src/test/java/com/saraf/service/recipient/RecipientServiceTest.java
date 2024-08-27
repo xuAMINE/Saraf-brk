@@ -8,10 +8,10 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.data.domain.AuditorAware;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.test.context.support.WithMockUser;
 
 import java.util.Collections;
 import java.util.Optional;
@@ -30,9 +30,35 @@ public class RecipientServiceTest {
     @InjectMocks
     private RecipientService recipientService;
 
+    @Mock
+    private AuditorAware<Integer> auditorAware;
+
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this);
+
+        // Create a UserDetails object with the user's details
+        UserDetails userDetails = User.builder()
+                .id(1) // Ensure the ID matches the one in your repository
+                .email("user@test.com")
+                .password("password")
+                .role(Role.USER)
+                .enabled(true)
+                .build();
+
+        // Create an Authentication object
+        UsernamePasswordAuthenticationToken auth =
+                new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+
+        // Set the authentication in the SecurityContext
+        SecurityContextHolder.getContext().setAuthentication(auth);
+
+        // Mocking AuditorAware to return the user ID (if necessary)
+        when(auditorAware.getCurrentAuditor()).thenReturn(Optional.of(1));
+
+        // Setup mocks for other repositories
+        User user = User.builder().id(1).email("user@test.com").enabled(true).build();
+        when(userRepository.findById(1)).thenReturn(Optional.of(user));
     }
 
     @Test

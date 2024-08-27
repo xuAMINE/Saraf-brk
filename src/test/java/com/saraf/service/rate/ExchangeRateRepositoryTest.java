@@ -16,8 +16,6 @@ import java.util.Optional;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 @DataJpaTest
-@Import(ExchangeRateRepositoryTest.TestConfig.class)
-@EnableJpaRepositories(basePackageClasses = ExchangeRateRepository.class) // Ensure repository scanning
 class ExchangeRateRepositoryTest {
 
     @Autowired

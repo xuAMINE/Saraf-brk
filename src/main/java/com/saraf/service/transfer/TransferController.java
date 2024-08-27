@@ -1,7 +1,6 @@
 package com.saraf.service.transfer;
 
 import com.saraf.security.admin.s3.S3Service;
-import com.saraf.security.exception.TransferNotFoundException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -34,9 +33,9 @@ public class TransferController {
         return ResponseEntity.ok("ok");
     }
 
-    @GetMapping("/receipt/{id}")
-    public ResponseEntity<String> getFileUrl(@PathVariable Integer id) {
-        String fileName = transferService.getReceiptName(id);
+    @GetMapping("/receipt/{transferId}")
+    public ResponseEntity<String> getFileUrl(@PathVariable Integer transferId) {
+        String fileName = transferService.getReceiptName(transferId);
         String url = s3Service.generatePreSignedUrl(fileName, 10);
         return ResponseEntity.ok(url);
     }

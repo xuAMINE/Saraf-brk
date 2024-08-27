@@ -20,6 +20,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.net.URI;
 
 @RestController
 @RequestMapping("/api/v1/auth")
@@ -60,19 +61,21 @@ public class AuthenticationController {
   }
 
   @GetMapping("/activate-account")
-  public ResponseEntity<String> activateAccount(@RequestParam String verToken, HttpServletResponse response) throws MessagingException {
+  public ResponseEntity<String> activateAccount(@RequestParam String verToken) throws MessagingException {
     try {
       boolean isActivated = service.activateAccount(verToken);
-      if (isActivated)
-        response.sendRedirect("http://127.0.0.1:5501/Saraf-BRK/pages/account-activated.html");
-      return ResponseEntity.ok("Account activated successfully");
+      if (isActivated) {
+        return ResponseEntity.status(HttpStatus.FOUND)
+                .location(URI.create("http://127.0.0.1:5501/Saraf-BRK/pages/account-activated.html"))
+                .build();
+      } else
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body("Failed to activate account. Please check your token or request a new one.");
 
     } catch (EmailValidationException e) {
       return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
     } catch (RuntimeException e) {
       return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to activate account");
-    } catch (IOException e) {
-        throw new RuntimeException(e);
     }
   }
 

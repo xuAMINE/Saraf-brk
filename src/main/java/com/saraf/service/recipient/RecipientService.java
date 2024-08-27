@@ -4,8 +4,7 @@ import com.saraf.security.user.User;
 import com.saraf.security.user.UserRepository;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.data.domain.AuditorAware;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +18,7 @@ public class RecipientService {
 
     private final RecipientRepository recipientRepository;
     private final UserRepository userRepository;
+    private final AuditorAware<Integer> auditorAware;
 
     public Recipient addRecipient(RecipientRequest request) {
         var user = getCurrentUser();
@@ -54,10 +54,10 @@ public class RecipientService {
     }
 
     private User getCurrentUser() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String email = authentication.getName();
-        return userRepository.findByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException(email));
+        Integer userId = auditorAware.getCurrentAuditor()
+                .orElseThrow(() -> new UsernameNotFoundException("User not authenticated"));
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new UsernameNotFoundException("User with ID " + userId + " not found"));
     }
 
     public List<Recipient> getRecipientsForCurrentUser() {

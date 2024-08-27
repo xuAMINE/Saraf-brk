@@ -18,9 +18,3 @@ spring:
       hibernate:
         format_sql: false
     database-platform: org.hibernate.dialect.H2Dialect
-
-  sql:
-    init:
-      mode: always
-      schema-locations: classpath:schema.sql
-      data-locations: classpath:data.sql
