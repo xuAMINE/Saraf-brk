@@ -1,9 +1,7 @@
 package com.saraf.security.config;
 
-import com.saraf.security.token.Token;
 import com.saraf.security.token.TokenRepository;
 import com.saraf.security.user.Role;
-import com.saraf.security.user.User;
 import com.saraf.security.user.UserRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -14,14 +12,12 @@ import java.security.Key;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 import java.util.function.Function;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -82,22 +78,23 @@ public class JwtService {
 
   public boolean isTokenValid(String token, UserDetails userDetails) {
     final String username = extractUsername(token);
-    return (username.equals(userDetails.getUsername())) && !isTokenExpired(token);
+    return (username.equals(userDetails.getUsername())) && isTokenExpired(token);
   }
 
   public boolean isTokenValid(String token) {
     var tokenEntity = tokenRepository.findByToken(token).orElse(null);
-    return tokenEntity != null && !tokenEntity.isExpired() && !tokenEntity.isRevoked() && !isTokenExpired(token);
+    return tokenEntity != null && !tokenEntity.isExpired() && !tokenEntity.isRevoked() && isTokenExpired(token);
   }
 
   public Role getUserRoleFromToken(String token) {
     String email = extractUsername(token);
-    var user =  userRepository.findByEmail(email);
-    return user.get().getRole();
+    var user =  userRepository.findByEmail(email)
+            .orElseThrow(() -> new UsernameNotFoundException(email));
+    return user.getRole();
   }
 
   private boolean isTokenExpired(String token) {
-    return extractExpiration(token).before(new Date());
+    return !extractExpiration(token).before(new Date());
   }
 
   private Date extractExpiration(String token) {

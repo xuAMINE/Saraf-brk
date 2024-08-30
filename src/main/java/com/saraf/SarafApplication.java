@@ -3,15 +3,11 @@ package com.saraf;
 import com.saraf.security.auth.AuthenticationService;
 import com.saraf.security.auth.RegisterRequest;
 import com.saraf.security.user.Role;
-import com.saraf.security.user.RoleService;
 import com.saraf.security.user.User;
 import com.saraf.security.user.UserRepository;
 import com.saraf.service.rate.ExchangeRateService;
-import com.saraf.service.recipient.Recipient;
 import com.saraf.service.recipient.RecipientRequest;
 import com.saraf.service.recipient.RecipientService;
-import com.saraf.service.transfer.Status;
-import com.saraf.service.transfer.Transfer;
 import com.saraf.service.transfer.TransferRequest;
 import com.saraf.service.transfer.TransferService;
 import org.springframework.boot.CommandLineRunner;
@@ -26,7 +22,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 
 @SpringBootApplication
 @EnableJpaAuditing(auditorAwareRef = "auditorAware")
@@ -37,7 +32,7 @@ public class SarafApplication {
 		SpringApplication.run(SarafApplication.class, args);
 	}
 
-	/*@Bean
+	@Bean
 	public CommandLineRunner commandLineRunner(
 			AuthenticationService service,
 			RecipientService recipientService,
@@ -85,5 +80,5 @@ public class SarafApplication {
 
 			SecurityContextHolder.clearContext();
 		};
-	}*/
+	}
 }

@@ -32,6 +32,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class AuthenticationService {
+
   private final UserRepository repository;
   private final TokenRepository tokenRepository;
   private final VerTokenRepository verTokenRepository;
@@ -146,13 +147,6 @@ public class AuthenticationService {
 
     var user = repository.findByEmail(request.getEmail())
             .orElseThrow(() -> new UsernameNotFoundException(request.getEmail()));
-
-    authenticationManager.authenticate(
-        new UsernamePasswordAuthenticationToken(
-            request.getEmail(),
-            request.getPassword()
-        )
-    );
 
     var jwtToken = jwtService.generateToken(user);
     var refreshToken = jwtService.generateRefreshToken(user);
