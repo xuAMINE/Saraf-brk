@@ -1,4 +1,4 @@
-package com.saraf.security.user;
+package com.saraf.security.exception;
 
 public class UserNotFoundException extends RuntimeException {
     public UserNotFoundException(String message) {

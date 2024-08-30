@@ -3,6 +3,7 @@ package com.saraf.security.auth;
 import com.saraf.security.admin.ApiResponse;
 import com.saraf.security.config.JwtService;
 import com.saraf.security.email.ResendVerificationRequest;
+import com.saraf.security.exception.EmailValidationException;
 import com.saraf.security.exception.InvalidTokenException;
 import com.saraf.security.exception.TokenExpiredException;
 import com.saraf.security.user.Role;
@@ -19,11 +20,11 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.net.URI;
 
 @RestController
 @RequestMapping("/api/v1/auth")
 @RequiredArgsConstructor
-
 public class AuthenticationController {
 
   private final AuthenticationService service;
@@ -60,19 +61,21 @@ public class AuthenticationController {
   }
 
   @GetMapping("/activate-account")
-  public ResponseEntity<String> activateAccount(@RequestParam String verToken, HttpServletResponse response) throws MessagingException {
+  public ResponseEntity<String> activateAccount(@RequestParam String verToken) throws MessagingException {
     try {
       boolean isActivated = service.activateAccount(verToken);
-      if (isActivated)
-        response.sendRedirect("http://127.0.0.1:5501/Saraf-BRK/pages/account-activated.html");
-      return ResponseEntity.ok("Account activated successfully");
+      if (isActivated) {
+        return ResponseEntity.status(HttpStatus.FOUND)
+                .location(URI.create("http://127.0.0.1:5501/Saraf-BRK/pages/account-activated.html"))
+                .build();
+      } else
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body("Failed to activate account. Please check your token or request a new one.");
 
-    } catch (InvalidTokenException | TokenExpiredException | IllegalArgumentException e) {
+    } catch (EmailValidationException e) {
       return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
     } catch (RuntimeException e) {
       return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to activate account");
-    } catch (IOException e) {
-        throw new RuntimeException(e);
     }
   }
 

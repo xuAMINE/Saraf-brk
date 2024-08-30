@@ -8,6 +8,8 @@ import com.saraf.service.rate.ExchangeRateRepository;
 import com.saraf.service.recipient.RecipientRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.data.domain.AuditorAware;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -30,9 +32,11 @@ public class TransferService {
     private final UserRepository userRepository;
     private final RecipientRepository recipientRepository;
     private final ExchangeRateRepository rateRepository;
+    private final AuditorAware<Integer> auditorAware;
 
     public Transfer addTransfer(TransferRequest request) {
-        var user = getCurrentUser();
+        var user = userRepository.findById(getCurrentUser())
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
         ExchangeRate rate = rateRepository.findTopByOrderByIdDesc();
         double DZDtoUSD = rate.getCurrentRate();
@@ -43,13 +47,13 @@ public class TransferService {
         transfer.setStatus(Status.PENDING);
         transfer.setTransferDate(LocalDate.now());
         transfer.setUser(user);
-        transfer.setRecipient(recipientRepository.findByUserIdAndAndCcp(getCurrentUser().getId(), request.getCcp()));
+        transfer.setRecipient(recipientRepository.findByUserIdAndAndCcp(getCurrentUser(), request.getCcp()));
 
         return transferRepository.save(transfer);
     }
 
     public List<TransferDTO> getTransfersForUser() {
-        Integer userId = getCurrentUser().getId();
+        Integer userId = getCurrentUser();
         return transferRepository.findTransfersByUserId(userId);
     }
 
@@ -59,11 +63,9 @@ public class TransferService {
         return transferRepository.findAllForAdmin(pageable);
     }
 
-    private User getCurrentUser() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String email = authentication.getName();
-        return userRepository.findByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException(email));
+    private Integer getCurrentUser() {
+        return auditorAware.getCurrentAuditor()
+                .orElseThrow(() -> new UsernameNotFoundException("User not authenticated"));
     }
 
     public Transfer updateStatus(Integer id, Status status) {

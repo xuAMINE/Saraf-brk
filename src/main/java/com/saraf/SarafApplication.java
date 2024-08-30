@@ -37,7 +37,7 @@ public class SarafApplication {
 		SpringApplication.run(SarafApplication.class, args);
 	}
 
-	@Bean
+	/*@Bean
 	public CommandLineRunner commandLineRunner(
 			AuthenticationService service,
 			RecipientService recipientService,
@@ -85,5 +85,5 @@ public class SarafApplication {
 
 			SecurityContextHolder.clearContext();
 		};
-	}
+	}*/
 }

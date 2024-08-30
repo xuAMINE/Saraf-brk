@@ -37,9 +37,9 @@ public class AdminController {
     }
 
     @PostMapping("/upload-receipt/{id}")
-    public ResponseEntity<?> uploadReceipt(@PathVariable Integer id, @RequestParam("file") MultipartFile file) {
+    public ResponseEntity<?> uploadReceipt(@PathVariable Integer id, @RequestParam("receipt") MultipartFile receipt) {
         try {
-            Transfer transfer = s3Service.saveReceipt(id, file);
+            Transfer transfer = s3Service.saveReceipt(id, receipt);
             return ResponseEntity.ok().body(new ApiResponse(true, "Receipt uploaded successfully", transfer.getReceipt()));
         } catch (TransferNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse(false, "Transfer not found"));

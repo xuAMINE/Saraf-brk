@@ -25,8 +25,8 @@ public class VerificationToken {
     @JoinColumn(name= "user_id", nullable = false)
     private User user;
 
-    public boolean isActive() {
-        return validatedAt == null && expires.isAfter(LocalDateTime.now());
+    public boolean isExpired() {
+        return !expires.isAfter(LocalDateTime.now());
     }
 
     public void markAsExpired() {

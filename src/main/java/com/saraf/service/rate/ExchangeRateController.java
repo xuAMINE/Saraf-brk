@@ -21,10 +21,9 @@ public class ExchangeRateController {
         }
     }
 
-    @PostMapping
+    @PostMapping()
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<?> updateRate(@RequestBody Double newRate) {
-
+    public ResponseEntity<?> updateRate(@RequestParam Integer newRate) {
         if (newRate < 300 && newRate > 100){
             ExchangeRateService.updateRate(newRate);
             return ResponseEntity.ok().build();
