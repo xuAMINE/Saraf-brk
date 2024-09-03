@@ -2,6 +2,7 @@ package com.saraf.service.recipient;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,8 +24,7 @@ public class RecipientController {
     @PostMapping("/add")
     public ResponseEntity<Recipient> addRecipient(@RequestBody @Valid RecipientRequest request) {
         Recipient recipient = recipientService.addRecipient(request);
-        return ResponseEntity.ok(recipient);
-        // Catch UsernameNotFoundException
+        return ResponseEntity.status(HttpStatus.CREATED).body(recipient);
     }
 
     @PutMapping("/{ccp}")

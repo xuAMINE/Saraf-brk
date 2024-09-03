@@ -55,8 +55,10 @@ public class AuthenticationService {
     var savedUser = repository.save(user);
     var jwtToken = jwtService.generateToken(user);
     var refreshToken = jwtService.generateRefreshToken(user);
+
     saveUserToken(savedUser, jwtToken);
     sendValidationEmail(user);
+
     return AuthenticationResponse.builder()
         .accessToken(jwtToken)
         .refreshToken(refreshToken)
@@ -182,6 +184,7 @@ public class AuthenticationService {
     tokenRepository.saveAll(validUserTokens);
   }
 
+  @Transactional
   public void refreshToken(
           HttpServletRequest request,
           HttpServletResponse response

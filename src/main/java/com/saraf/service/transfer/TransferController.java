@@ -3,6 +3,7 @@ package com.saraf.service.transfer;
 import com.saraf.security.admin.s3.S3Service;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,7 +20,7 @@ public class TransferController {
     @PostMapping("/add")
     public ResponseEntity<Transfer> add(@RequestBody TransferRequest request) {
         Transfer transfer = transferService.addTransfer(request);
-        return ResponseEntity.ok(transfer);
+        return ResponseEntity.status(HttpStatus.CREATED).body(transfer);
     }
 
     @GetMapping

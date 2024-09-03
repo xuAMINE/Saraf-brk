@@ -19,18 +19,6 @@ spring:
             client-secret: d5e239e538014443166daf00325c96e0
             scope: public_profile, email
             redirect-uri: "{baseUrl}/login/oauth2/code/facebook"
-#          github:
-#            client-id: Ov23lielHDC0fn8yQ31Z
-#            client-secret: be7ad3e44e6aafcd0a84d75de3e3e75eb8c29889
-#            scope: read:user
-#            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
-#            authorization-grant-type: authorization_code
-#        provider:
-#          github:
-#            authorization-uri: https://github.com/login/oauth/authorize
-#            token-uri: https://github.com/login/oauth/access_token
-#            user-info-uri: https://api.github.com/user
-#            user-name-attribute: id
 
 springdoc:
   default-produces-media-type: application/json

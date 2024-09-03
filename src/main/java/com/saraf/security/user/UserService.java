@@ -2,6 +2,7 @@ package com.saraf.security.user;
 
 import com.saraf.security.email.EmailService;
 import com.saraf.security.email.EmailTemplateName;
+import com.saraf.security.exception.PasswordResetException;
 import com.saraf.security.user.forgot_password.ForgotPasswordRequest;
 import com.saraf.security.user.forgot_password.PasswordResetToken;
 import com.saraf.security.user.forgot_password.PasswordResetTokenRepository;
@@ -29,10 +30,10 @@ public class UserService {
         var user = (User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
 
         if (!passwordEncoder.matches(request.getCurrentPassword(), user.getPassword())) {
-            throw new IllegalStateException("Incorrect password");
+            throw new PasswordResetException("Incorrect password");
         }
         if (!request.getNewPassword().equals(request.getConfirmationPassword())) {
-            throw new IllegalStateException("Passwords doesn't match");
+            throw new PasswordResetException("Passwords doesn't match");
         }
 
         user.setPassword(passwordEncoder.encode(request.getNewPassword()));

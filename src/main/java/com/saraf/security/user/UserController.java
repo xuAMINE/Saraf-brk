@@ -20,10 +20,7 @@ public class UserController {
 
     @PatchMapping
     @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<?> changePassword(
-          @RequestBody @Valid ChangePasswordRequest request,
-          Principal connectedUser
-    ) {
+    public ResponseEntity<?> changePassword(@RequestBody @Valid ChangePasswordRequest request, Principal connectedUser) {
         service.changePassword(request, connectedUser);
         return ResponseEntity.ok().build();
     }

@@ -50,7 +50,7 @@ public class SarafApplication {
 					.build();
 			System.out.println("Admin token: " + service.register(admin).getAccessToken());
 
-			User user = userRepository.findByEmail(admin.getEmail()).orElseThrow();
+					User user = userRepository.findByEmail(admin.getEmail()).orElseThrow();
 			user.setEnabled(true);
 			user.setRole(Role.ADMIN);
 			userRepository.save(user);
