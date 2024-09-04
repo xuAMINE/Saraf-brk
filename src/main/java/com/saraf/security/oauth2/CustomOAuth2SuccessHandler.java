@@ -35,7 +35,14 @@ public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler 
 
         // Generate JWT tokens
         String jwtToken = jwtService.generateToken(user);
-        String redirectUrl = "http://127.0.0.1:5501/Saraf-BRK/pages/recipients.html?token=" + jwtToken;
+        String refreshToken = jwtService.generateRefreshToken(user);
+
+        // Construct the redirect URL with both tokens
+        String redirectUrl = String.format(
+                "http://127.0.0.1:5501/Saraf-BRK/pages/recipients.html?token=%s&refreshToken=%s",
+                jwtToken, refreshToken
+        );
+
         response.sendRedirect(redirectUrl);
     }
 

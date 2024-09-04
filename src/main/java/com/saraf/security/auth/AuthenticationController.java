@@ -92,7 +92,7 @@ public class AuthenticationController {
     if (jwtService.isTokenValid(jwt)) {
       if (role.equals(Role.ADMIN) || role.equals(Role.MANAGER))
         return ResponseEntity.ok("Admin session valid");
-      return ResponseEntity.ok(true);
+      return ResponseEntity.ok("User session valid");
     } else {
       return ResponseEntity.status(401).body(false);
     }

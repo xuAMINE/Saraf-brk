@@ -45,7 +45,7 @@ public class RecipientControllerTest {
         mockMvc.perform(post("/api/v1/recipient/add")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"firstName\":\"John\",\"lastName\":\"Doe\",\"ccp\":\"123456789089\",\"phoneNumber\":\"664440342\",\"doContact\":true}"))
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
                 .andExpect(content().json("{'firstname':'John', 'lastname':'Doe', 'ccp':'123456789089'}"));
     }
 

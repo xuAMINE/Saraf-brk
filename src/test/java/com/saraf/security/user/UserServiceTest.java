@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.saraf.security.email.EmailService;
+import com.saraf.security.exception.PasswordResetException;
 import com.saraf.security.user.forgot_password.PasswordResetToken;
 import com.saraf.security.user.forgot_password.PasswordResetTokenRepository;
 import com.saraf.security.user.forgot_password.ForgotPasswordRequest;
@@ -93,7 +94,7 @@ class UserServiceTest {
         when(passwordEncoder.matches("wrong_password", testUser.getPassword())).thenReturn(false);
 
         assertThatThrownBy(() -> userService.changePassword(request, principal))
-                .isInstanceOf(IllegalStateException.class)
+                .isInstanceOf(PasswordResetException.class)
                 .hasMessage("Incorrect password");
     }
 

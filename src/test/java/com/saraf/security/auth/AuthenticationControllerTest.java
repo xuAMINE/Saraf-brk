@@ -167,7 +167,7 @@ public class AuthenticationControllerTest {
         mockMvc.perform(get("/api/v1/auth/check-session")
                         .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk())
-                .andExpect(content().string("true"));
+                .andExpect(content().string("User session valid"));
     }
 
     @Test
