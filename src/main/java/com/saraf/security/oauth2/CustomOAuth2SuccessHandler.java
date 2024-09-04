@@ -8,10 +8,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
@@ -38,7 +35,14 @@ public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler 
 
         // Generate JWT tokens
         String jwtToken = jwtService.generateToken(user);
-        String redirectUrl = "http://127.0.0.1:5501/Saraf-BRK/pages/recipients.html?token=" + jwtToken;
+        String refreshToken = jwtService.generateRefreshToken(user);
+
+        // Construct the redirect URL with both tokens
+        String redirectUrl = String.format(
+                "http://127.0.0.1:5501/Saraf-BRK/pages/recipients.html?token=%s&refreshToken=%s",
+                jwtToken, refreshToken
+        );
+
         response.sendRedirect(redirectUrl);
     }
 

@@ -15,7 +15,7 @@ public interface TransferRepository extends JpaRepository<Transfer, Integer> {
     @Query("SELECT new com.saraf.service.transfer.TransferDTO(t.id, t.amount, t.amountReceived, t.status, t.transferDate, " +
             "CASE WHEN r IS NULL THEN 'One Time Transfer' ELSE CONCAT(r.firstname, ' ', r.lastname) END, t.receipt) " +
             "FROM Transfer t LEFT JOIN t.recipient r WHERE t.user.id = :userId ORDER BY t.transferDate DESC")
-    List<TransferDTO> findTransfersByUserId(@Param("userId") Integer userId);
+    Page<TransferDTO> findTransfersByUserId(@Param("userId") Integer userId, Pageable pageable);
 
     @Query("SELECT new com.saraf.service.transfer.TransferDTO(t.id, t.amount, t.amountReceived, t.status, t.transferDate, " +
             "CASE WHEN r IS NULL THEN 'One Time Transfer' ELSE CONCAT(r.firstname, ' ', r.lastname) END, t.receipt) " +

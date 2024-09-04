@@ -72,6 +72,7 @@ class ExchangeRateControllerTest {
     }
 
     @Test
+    @WithMockUser(roles = "USER")
     void updateRate_shouldReturnUnauthorizedForNonAdmin() throws Exception {
         mockMvc.perform(post("/api/v1/rate")
                         .param("newRate", "200")) // Pass newRate as request parameter without admin role

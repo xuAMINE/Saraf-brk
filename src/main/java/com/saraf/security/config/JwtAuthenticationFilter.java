@@ -22,7 +22,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 @Component
 @RequiredArgsConstructor
-public class JwtAuthenticationFilter extends OncePerRequestFilter {
+public class  JwtAuthenticationFilter extends OncePerRequestFilter {
 
   private final JwtService jwtService;
   private final UserDetailsService userDetailsService;
@@ -70,12 +70,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
       }
       filterChain.doFilter(request, response);
     } catch (ExpiredJwtException ex) {
-      // Log the exception if necessary
-      // Now, manually set the response status and error message
-      response.setStatus(HttpStatus.FORBIDDEN.value());
-      response.getWriter().write("Token has expired, please log in again.");
-      response.getWriter().flush();
+      response.setStatus(HttpStatus.UNAUTHORIZED.value()); // Set 401 status
+      response.setContentType("application/json"); // Set response content type to JSON
+      response.getWriter().write("{\"message\": \"JWT expired at " + ex.getClaims().getExpiration() +
+              ". Current time: " + new java.util.Date() + "\"}"); // Detailed JSON response
+      response.getWriter().flush(); // Ensure response is sent immediately
     }
+
   }
 
 }

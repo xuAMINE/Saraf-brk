@@ -3,6 +3,7 @@ package com.saraf.security.exception;
 import com.saraf.security.admin.ApiResponse;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.security.SignatureException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.context.request.WebRequest;
 
+import java.net.MalformedURLException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -66,10 +68,17 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(ExpiredJwtException.class)
-    @ResponseStatus(HttpStatus.BAD_GATEWAY)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
     public ResponseEntity<ErrorResponse> handleExpiredJwtException(ExpiredJwtException ex) {
         ErrorResponse ErrResponse = new ErrorResponse(ex.getMessage());
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(ErrResponse);
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ErrResponse);
+    }
+
+    @ExceptionHandler(MalformedURLException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public ResponseEntity<ErrorResponse> handleMalformedURLException(MalformedURLException ex) {
+        ErrorResponse ErrResponse = new ErrorResponse(ex.getMessage());
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ErrResponse);
     }
 
     @ExceptionHandler(UsernameNotFoundException.class)
@@ -86,5 +95,24 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ErrResponse);
     }
 
+    @ExceptionHandler(SignatureException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public ResponseEntity<ErrorResponse> handleSignatureException(SignatureException ex) {
+        ErrorResponse ErrResponse = new ErrorResponse(ex.getMessage());
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ErrResponse);
+    }
 
+    @ExceptionHandler(DuplicateCcpException.class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ResponseEntity<ErrorResponse> handleDuplicateCcpException(DuplicateCcpException ex) {
+        ErrorResponse ErrResponse = new ErrorResponse(ex.getMessage());
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(ErrResponse);
+    }
+
+    @ExceptionHandler(PasswordResetException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<ErrorResponse> handlePasswordResetException(PasswordResetException ex) {
+        ErrorResponse ErrResponse = new ErrorResponse(ex.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ErrResponse);
+    }
 }

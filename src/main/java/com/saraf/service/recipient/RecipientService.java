@@ -1,9 +1,11 @@
 package com.saraf.service.recipient;
 
+import com.saraf.security.exception.DuplicateCcpException;
 import com.saraf.security.user.User;
 import com.saraf.security.user.UserRepository;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.data.domain.AuditorAware;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -27,6 +29,9 @@ public class RecipientService {
 
         if (existingRecipient.isPresent()) {
             Recipient recipient = existingRecipient.get();
+            if (recipient.isActive()) {
+                throw new DuplicateCcpException("Recipient already exists!");
+            }
             recipient.setActive(true);
             return recipientRepository.save(recipient);
         }

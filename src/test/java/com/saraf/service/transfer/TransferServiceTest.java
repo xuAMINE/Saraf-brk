@@ -17,7 +17,7 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.data.domain.AuditorAware;
+import org.springframework.data.domain.*;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -25,14 +25,15 @@ import org.springframework.security.test.context.support.WithMockUser;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.*;
 
 
 class TransferServiceTest {
@@ -111,17 +112,39 @@ class TransferServiceTest {
     @Test
     @WithMockUser(roles = "USER")
     void getTransfersForUser() {
-        TransferDTO transferDTO = new TransferDTO(1, BigDecimal.valueOf(120), BigDecimal.valueOf(108), Status.PENDING, LocalDate.now(), "Jane Doe", "receipt1");
+        int page = 0;
+        int size = 10;
+        TransferDTO transferDTO = new TransferDTO(1, BigDecimal.valueOf(120), BigDecimal.valueOf(108), Status.PENDING, LocalDateTime.now(), "Jane Doe", "receipt1");
 
-        // Mock the repository to return a list with the expected TransferDTO
-        when(transferRepository.findTransfersByUserId(1)).thenReturn(List.of(transferDTO));
+        Page<TransferDTO> pageOfTransfers = new PageImpl<>(List.of(transferDTO));
 
-        List<TransferDTO> transfers = transferService.getTransfersForUser();
+        when(transferRepository.findTransfersByUserId(1, PageRequest.of(page, size))).thenReturn(pageOfTransfers);
 
-        // Assert the returned list is not empty and contains the correct TransferDTO
-        assertThat(transfers).isNotEmpty();
-        assertThat(transfers.get(0)).isEqualTo(transferDTO);
+        Page<TransferDTO> transfers = transferService.getTransfersForUser(page, size);
+
+        assertThat(transfers).isNotNull();
+        assertThat(transfers.getTotalElements()).isEqualTo(1);
+        assertThat(transfers.getContent().get(0)).isEqualTo(transferDTO);
     }
+
+    @Test
+    @WithMockUser(roles = "ADMIN")
+    void getTransfersForAdmin() {
+        int page = 0;
+        int size = 10;
+        TransferDTO transferDTO = new TransferDTO(1, BigDecimal.valueOf(120), BigDecimal.valueOf(108), Status.PENDING, LocalDateTime.now(), "Jane Doe", "receipt1");
+
+        Page<TransferDTO> pageOfTransfers = new PageImpl<>(List.of(transferDTO));
+
+        when(transferRepository.findAllForAdmin(PageRequest.of(page, size))).thenReturn(pageOfTransfers);
+
+        Page<TransferDTO> transfers = transferService.getTransfersForAdmin(page, size);
+
+        assertThat(transfers).isNotNull();
+        assertThat(transfers.getTotalElements()).isEqualTo(1);
+        assertThat(transfers.getContent().get(0)).isEqualTo(transferDTO);
+    }
+
 
     @Test
     void updateStatus() {

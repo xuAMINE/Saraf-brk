@@ -18,6 +18,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -49,7 +50,7 @@ class TransferRepositoryTest {
                 .amount(BigDecimal.valueOf(100))
                 .amountReceived(BigDecimal.valueOf(90))
                 .status(Status.PENDING)
-                .transferDate(LocalDate.now())
+                .transferDate(LocalDateTime.now())
                 .user(user)
                 .recipient(recipient)
                 .receipt("receipt1")
@@ -59,9 +60,9 @@ class TransferRepositoryTest {
 
     @Test
     void findTransfersByUserId() {
-        List<TransferDTO> transfers = transferRepository.findTransfersByUserId(1);
-        assertThat(transfers.size()).isEqualTo(1);
-        assertThat(transfers.get(0).getRecipientFullName()).isEqualTo("Jane Doe");
+        Page<TransferDTO> transfers = transferRepository.findTransfersByUserId(1, PageRequest.of(0, 10));
+        assertThat(transfers.getContent()).hasSize(1);
+        assertThat(transfers.getContent().get(0).getRecipientFullName()).isEqualTo("Jane Doe");
     }
 
     @Test
