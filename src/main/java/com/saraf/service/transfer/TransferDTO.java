@@ -1,5 +1,6 @@
 package com.saraf.service.transfer;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 
@@ -9,6 +10,7 @@ import java.time.LocalDateTime;
 
 @Data
 @Builder
+@AllArgsConstructor
 public class TransferDTO {
     private Integer id;
     private BigDecimal amount;
@@ -17,15 +19,6 @@ public class TransferDTO {
     private LocalDateTime transferDate;
     private String recipientFullName;
     private String receipt;
-
-    public TransferDTO(Integer id, BigDecimal amount, BigDecimal amountReceived, Status status, LocalDateTime transferDate, String recipientFullName, String receipt) {
-        this.id = id;
-        this.amount = amount;
-        this.amountReceived = amountReceived;
-        this.status = status;
-        this.transferDate = transferDate;
-        this.recipientFullName = recipientFullName;
-        this.receipt = receipt;
-    }
+    private PaymentMethod paymentMethod;
 }
 

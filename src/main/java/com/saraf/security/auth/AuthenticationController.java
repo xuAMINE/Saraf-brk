@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.net.URI;
+import java.security.Principal;
 
 @RestController
 @RequestMapping("/api/v1/auth")
@@ -97,5 +98,4 @@ public class AuthenticationController {
       return ResponseEntity.status(401).body(false);
     }
   }
-
 }

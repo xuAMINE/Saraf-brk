@@ -16,12 +16,15 @@ public class RecipientRequest {
 
     @NotEmpty(message = "Please provide first and last Name.")
     @Size(min = 3, message = "Name should be at least 3 characters long.")
+    @Size(max = 25, message = "Name is too long.")
     private String firstName;
     @NotEmpty(message = "Please provide first and last Name.")
     @Size(min = 3, message = "Name should be at least 3 characters long.")
+    @Size(max = 25, message = "Name is too long.")
     private String lastName;
     @NotEmpty(message = "CCP cannot be left empty.")
     @Size(min = 11, message = "Please Enter a valid CCP number.")
+    @Size(max = 16, message = "Please Enter a valid CCP number.")
     private String ccp;
     private String phoneNumber;
     private boolean doContact;

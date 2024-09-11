@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Confirmation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        .email-container {
+            max-width: 600px;
+            margin: 20px auto;
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .email-header {
+            text-align: center;
+            background-color: #007bff;
+            padding: 10px 0;
+            color: #ffffff;
+            border-radius: 10px 10px 0 0;
+        }
+        .email-content {
+            padding: 20px;
+        }
+        .email-content p {
+            font-size: 16px;
+            line-height: 1.5;
+        }
+        .email-footer {
+            text-align: center;
+            padding: 10px;
+            background-color: #f4f4f4;
+            border-radius: 0 0 10px 10px;
+            color: #888888;
+        }
+    </style>
+</head>
+<body>
+
+<div class="email-container">
+    <div class="email-header">
+        <h2>Thank You for Contacting Us!</h2>
+    </div>
+    <div class="email-content">
+        <p>Dear <span th:text="${name}"></span>,</p>
+
+        <p>Thank you for reaching out to us! We have received your message and will respond as soon as possible. Below is a copy of your message:</p>
+
+        <p><strong>Your message:</strong></p>
+        <p th:text="${message}"></p>
+
+        <p>We appreciate your patience, and we look forward to assisting you.</p>
+
+        <p>Best regards,</p>
+        <p>SB Team</p>
+    </div>
+    <div class="email-footer">
+        <p>&copy; 2024 Saraf BRK. All rights reserved.</p>
+    </div>
+</div>
+
+</body>
+</html>

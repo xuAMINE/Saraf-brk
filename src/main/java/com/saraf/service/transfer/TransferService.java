@@ -1,6 +1,7 @@
 package com.saraf.service.transfer;
 
 import com.saraf.security.exception.TransferNotFoundException;
+import com.saraf.security.exception.TransferNotPendingException;
 import com.saraf.security.user.User;
 import com.saraf.security.user.UserRepository;
 import com.saraf.service.rate.ExchangeRate;
@@ -42,13 +43,15 @@ public class TransferService {
         ExchangeRate rate = rateRepository.findTopByOrderByIdDesc();
         double DZDtoUSD = rate.getCurrentRate();
 
-        Transfer transfer = new Transfer();
-        transfer.setAmount(request.getAmount());
-        transfer.setAmountReceived(request.getAmount().multiply(BigDecimal.valueOf(DZDtoUSD)));
-        transfer.setStatus(Status.PENDING);
-        transfer.setTransferDate(LocalDateTime.now());
-        transfer.setUser(user);
-        transfer.setRecipient(recipientRepository.findByUserIdAndAndCcp(getCurrentUser(), request.getCcp()));
+        Transfer transfer = Transfer.builder()
+                .amount(request.getAmount())
+                .amountReceived(request.getAmount().multiply(BigDecimal.valueOf(DZDtoUSD)))
+                .status(Status.PENDING)
+                .transferDate(LocalDateTime.now())
+                .paymentMethod(request.getPaymentMethod())
+                .user(user)
+                .recipient(recipientRepository.findByUserIdAndAndCcp(getCurrentUser(), request.getCcp()))
+                .build();
 
         return transferRepository.save(transfer);
     }
@@ -59,10 +62,21 @@ public class TransferService {
         return transferRepository.findTransfersByUserId(userId, pageable);
     }
 
+    public Page<TransferDTO> getNonCancelledTransfersForUser(int page, int size) {
+        Integer userId = getCurrentUser();
+        Pageable pageable = PageRequest.of(page, size);
+        return transferRepository.findAllNotCancelled(userId, pageable);
+    }
+
     @PreAuthorize("hasRole('ADMIN')")
     public Page<TransferDTO> getTransfersForAdmin(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         return transferRepository.findAllForAdmin(pageable);
+    }
+
+    public Page<TransferDTO> getPendingTransfersForAdmin(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return transferRepository.findAllPendingForAdmin(pageable);
     }
 
     Integer getCurrentUser() {
@@ -78,10 +92,26 @@ public class TransferService {
         return transferRepository.save(transfer);
     }
 
+    public Transfer cancelTransfer(Integer id) {
+        Transfer transfer = transferRepository.findById(id)
+                .orElseThrow(() -> new TransferNotFoundException("Transfer not found"));
+
+        if (transfer.getStatus() != Status.PENDING)
+            throw new TransferNotPendingException("Cannot cancel transfer");
+
+
+        transfer.setStatus(Status.CANCELED);
+        return transferRepository.save(transfer);
+    }
+
     public String getReceiptName(Integer id) {
         Transfer transfer = transferRepository.findById(id)
                 .orElseThrow(() -> new TransferNotFoundException("Transfer not found"));
         return transfer.getReceipt();
+    }
+
+    public String getUserPhoneNumberByTransferId(Integer transferId) {
+        return transferRepository.findUserPhoneNumberByTransferId(transferId);
     }
 
 

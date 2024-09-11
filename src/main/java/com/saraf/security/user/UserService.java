@@ -41,6 +41,17 @@ public class UserService {
         repository.save(user);
     }
 
+     void updatePhoneNumber(Principal connectedUser, String phoneNumber) {
+        var user = (User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
+
+        if (!isValidPhoneNumber(phoneNumber)) {
+            throw new IllegalArgumentException("Invalid phone number format");
+        }
+
+        user.setPhoneNumber(phoneNumber);
+        repository.save(user);
+    }
+
     public void forgotPassword (ForgotPasswordRequest request) throws MessagingException {
         var user = repository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new IllegalStateException("User not found"));
@@ -78,6 +89,18 @@ public class UserService {
         repository.save(user);
 
         resetTokenRepository.delete(resetToken);
-
     }
+
+    private boolean isValidPhoneNumber(String phoneNumber) {
+        String phonePattern = "^\\+?[0-9]{10,15}$";
+        return phoneNumber.matches(phonePattern);
+    }
+
+    public boolean hasPhoneNumber(Principal connectedUser) {
+        var user = (User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
+        String phoneNumber = user.getPhoneNumber();
+
+        return phoneNumber != null && !phoneNumber.isEmpty();
+    }
+
 }

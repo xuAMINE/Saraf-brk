@@ -36,6 +36,12 @@ public class AdminController {
         return transferService.getTransfersForAdmin(page, size);
     }
 
+    @GetMapping("/transfers/pending")
+    public Page<TransferDTO> getPendingTransfers(@RequestParam(defaultValue = "0") int page,
+                                                 @RequestParam(defaultValue = "20") int size) {
+        return transferService.getPendingTransfersForAdmin(page, size);
+    }
+
     @PostMapping("/upload-receipt/{id}")
     public ResponseEntity<?> uploadReceipt(@PathVariable Integer id, @RequestParam("receipt") MultipartFile receipt) {
         try {

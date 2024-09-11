@@ -25,6 +25,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.security.Principal;
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -125,7 +126,6 @@ public class AuthenticationService {
 
     return codeBuilder.toString();
   }
-
 
   public AuthenticationResponse authenticate(AuthenticationRequest request) {
     try {
@@ -244,4 +244,6 @@ public class AuthenticationService {
   public boolean userExists(String email) {
     return repository.existsByEmail(email);
   }
+
+
 }

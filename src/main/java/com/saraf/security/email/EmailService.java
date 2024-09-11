@@ -62,4 +62,39 @@ public class EmailService {
         mailSender.send(mimeMessage);
 
     }
+
+    public void sendContactUsEmail(String name, String email, String message) throws MessagingException {
+        MimeMessage mimeMessage = mailSender.createMimeMessage();
+        MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, MULTIPART_MODE_MIXED, UTF_8.name());
+
+        mimeMessageHelper.setFrom("sarafbrk@gmail.com");
+        mimeMessageHelper.setTo("sarafbrk@gmail.com");
+        mimeMessageHelper.setSubject("Contact Us Message");
+        mimeMessageHelper.setText("You have received a new message from: \n\n" +
+                                    "Name: " + name + "\n" +
+                                    "Email: " + email + "\n" +
+                                    "Message: " + message);
+
+        mailSender.send(mimeMessage);
+    }
+
+    public void sendContactConfirmEmail(String name, String email, String message) throws MessagingException {
+        MimeMessage mimeMessage = mailSender.createMimeMessage();
+        MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, MULTIPART_MODE_MIXED, UTF_8.name());
+        Map<String, Object> properties = new HashMap<>();
+        properties.put("name", name);
+        properties.put("message", message);
+
+        Context context = new Context();
+        context.setVariables(properties);
+
+        mimeMessageHelper.setFrom("sarafbrk@gmail.com");
+        mimeMessageHelper.setTo(email);
+        mimeMessageHelper.setSubject("Thank you for contacting us!");
+
+        String template = templateEngine.process(EmailTemplateName.CONTACT_CONFIRM.name(), context);
+        mimeMessageHelper.setText(template, true);
+
+        mailSender.send(mimeMessage);
+    }
 }
