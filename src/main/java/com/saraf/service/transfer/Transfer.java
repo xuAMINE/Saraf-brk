@@ -33,6 +33,7 @@ public class Transfer {
     @Enumerated(EnumType.STRING)
     private Status status;
 
+    private String code;
     private LocalDateTime transferDate;
 
     @Enumerated(EnumType.STRING)

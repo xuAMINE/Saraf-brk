@@ -40,7 +40,7 @@ class TransferRepositoryTest {
     @BeforeEach
     void setup() {
         // Setup necessary entities for tests (e.g., Users, Recipients, Transfers)
-        User user = User.builder().email("user@test.com").firstname("John").lastname("Doe").enabled(true).build();
+        User user = User.builder().email("user@test.com").firstname("John").lastname("Doe").enabled(true).phoneNumber("+1234567890").build();
         userRepository.save(user);
 
         Recipient recipient = Recipient.builder().firstname("Jane").lastname("Doe").ccp("123").user(user).build();
@@ -56,25 +56,55 @@ class TransferRepositoryTest {
                 .receipt("receipt1")
                 .build();
         transferRepository.save(transfer);
+
+        Transfer transfer2 = Transfer.builder()
+                .amount(BigDecimal.valueOf(100))
+                .amountReceived(BigDecimal.valueOf(90))
+                .status(Status.CANCELED)
+                .transferDate(LocalDateTime.now())
+                .user(user)
+                .recipient(recipient)
+                .receipt("testReceipt")
+                .build();
+        transferRepository.save(transfer2);
     }
 
     @Test
     void findTransfersByUserId() {
-        Page<TransferDTO> transfers = transferRepository.findTransfersByUserId(1, PageRequest.of(0, 10));
+        Integer userId = userRepository.findByEmail("user@test.com").get().getId();
+        Page<TransferDTO> transfers = transferRepository.findTransfersByUserId(userId, PageRequest.of(0, 10));
+        assertThat(transfers.getContent()).hasSize(2);
+        assertThat(transfers.getContent().get(0).getRecipientFullName()).isEqualTo("Jane Doe");
+    }
+
+    @Test
+    void findAllNotCancelled() {
+        // Use the correct userId here
+        Integer userId = userRepository.findByEmail("user@test.com").get().getId();
+        Page<TransferDTO> transfers = transferRepository.findAllNotCancelled(userId, PageRequest.of(0, 10));
         assertThat(transfers.getContent()).hasSize(1);
         assertThat(transfers.getContent().get(0).getRecipientFullName()).isEqualTo("Jane Doe");
     }
 
     @Test
     void findAllForAdmin() {
-        Page<TransferDTO> transfers = transferRepository.findAllForAdmin(PageRequest.of(0, 10));
-        assertThat(transfers.getContent()).hasSize(1);
+        Page<TransferAdminDTO> transfers = transferRepository.findAllForAdmin(PageRequest.of(0, 10));
+        assertThat(transfers.getContent()).hasSize(2);
     }
 
     @Test
     void findAllPendingForAdmin() {
-        Page<TransferDTO> transfers = transferRepository.findAllPendingForAdmin(PageRequest.of(0, 10));
+        Page<TransferAdminDTO> transfers = transferRepository.findAllPendingForAdmin(PageRequest.of(0, 10));
         assertThat(transfers.getContent()).hasSize(1);
+    }
+
+    @Test
+    public void findUserPhoneNumberByTransferId() {
+        Transfer transfer = transferRepository.findAll().get(0);  // Assumes the first saved transfer is the one we want
+        Integer transferId = transfer.getId();
+
+        String phoneNumber = transferRepository.findUserPhoneNumberByTransferId(transferId);
+        assertThat(phoneNumber).isEqualTo("+1234567890");
     }
 
     @TestConfiguration

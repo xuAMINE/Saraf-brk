@@ -51,7 +51,7 @@ class AdminControllerTest {
     @Test
     @WithMockUser(roles = "ADMIN")
     void getTransfers_Success() throws Exception {
-        Page<TransferDTO> transfers = new PageImpl<>(Collections.emptyList(), PageRequest.of(0, 20), 0);
+        Page<TransferAdminDTO> transfers = new PageImpl<>(Collections.emptyList(), PageRequest.of(0, 20), 0);
         when(transferService.getTransfersForAdmin(anyInt(), anyInt())).thenReturn(transfers);
 
         mockMvc.perform(get("/api/v1/admin/transfers")
@@ -60,6 +60,21 @@ class AdminControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content").isArray())
                 .andExpect(jsonPath("$.content").isEmpty());
+    }
+
+    @Test
+    @WithMockUser(roles = "ADMIN")
+    void getPendingTransfers_success() throws Exception {
+        Page<TransferAdminDTO> transfers = new PageImpl<>(Collections.emptyList(), PageRequest.of(0, 20), 0);
+        when(transferService.getPendingTransfersForAdmin(anyInt(), anyInt())).thenReturn(transfers);
+
+        mockMvc.perform(get("/api/v1/admin/transfers/pending")
+                        .param("page", "0")
+                        .param("size", "20"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content").isArray())
+                .andExpect(jsonPath("$.content").isEmpty());
+
     }
 
     @Test
@@ -157,7 +172,5 @@ class AdminControllerTest {
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.message").value("User with ID 1 not found"));
     }
-
-
 
 }

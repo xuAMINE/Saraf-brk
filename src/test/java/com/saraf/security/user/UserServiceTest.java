@@ -152,4 +152,61 @@ class UserServiceTest {
                 .isInstanceOf(IllegalStateException.class)
                 .hasMessage("Passwords do not match.");
     }
+
+    @Test
+    void testUpdatePhoneNumber_Success() {
+        String newPhoneNumber = "+1234567890";
+        UsernamePasswordAuthenticationToken principal = new UsernamePasswordAuthenticationToken(
+                testUser,
+                null,
+                Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"))
+        );
+
+        userService.updatePhoneNumber(principal, newPhoneNumber);
+
+        verify(userRepository).save(testUser);
+        assertThat(testUser.getPhoneNumber()).isEqualTo(newPhoneNumber);
+    }
+
+    @Test
+    void testUpdatePhoneNumber_InvalidPhoneNumber() {
+        String invalidPhoneNumber = "123"; // Invalid format
+        UsernamePasswordAuthenticationToken principal = new UsernamePasswordAuthenticationToken(
+                testUser,
+                null,
+                Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"))
+        );
+
+        assertThatThrownBy(() -> userService.updatePhoneNumber(principal, invalidPhoneNumber))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Invalid phone number format");
+    }
+
+    @Test
+    void testHasPhoneNumber_PhoneNumberExists() {
+        testUser.setPhoneNumber("+1234567890");
+        UsernamePasswordAuthenticationToken principal = new UsernamePasswordAuthenticationToken(
+                testUser,
+                null,
+                Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"))
+        );
+
+        boolean result = userService.hasPhoneNumber(principal);
+
+        assertThat(result).isTrue();
+    }
+
+    @Test
+    void testHasPhoneNumber_NoPhoneNumber() {
+        testUser.setPhoneNumber(null);
+        UsernamePasswordAuthenticationToken principal = new UsernamePasswordAuthenticationToken(
+                testUser,
+                null,
+                Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"))
+        );
+
+        boolean result = userService.hasPhoneNumber(principal);
+
+        assertThat(result).isFalse();
+    }
 }

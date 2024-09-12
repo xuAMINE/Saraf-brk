@@ -4,6 +4,7 @@ import com.saraf.security.admin.ApiResponse;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.security.SignatureException;
+import jakarta.mail.MessagingException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -135,4 +136,12 @@ public class GlobalExceptionHandler {
         ErrorResponse ErrResponse = new ErrorResponse(ex.getMessage());
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ErrResponse);
     }
+
+    @ExceptionHandler(MessagingException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ResponseEntity<ErrorResponse> handleMessagingException(MessagingException ex) {
+        ErrorResponse ErrResponse = new ErrorResponse(ex.getMessage());
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ErrResponse);
+    }
+
 }

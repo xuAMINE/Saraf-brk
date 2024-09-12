@@ -2,11 +2,10 @@ package com.saraf.security.auth;
 
 import com.saraf.security.config.JwtService;
 import com.saraf.security.email.EmailService;
+import com.saraf.security.exception.EmailValidationException;
+import com.saraf.security.token.Token;
 import com.saraf.security.token.TokenRepository;
-import com.saraf.security.user.Role;
-import com.saraf.security.user.User;
-import com.saraf.security.user.UserRepository;
-import com.saraf.security.user.VerTokenRepository;
+import com.saraf.security.user.*;
 import jakarta.mail.MessagingException;
 import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.http.HttpServletRequest;
@@ -20,6 +19,8 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -154,5 +155,114 @@ public class AuthenticationServiceTest {
         boolean userExists = authenticationService.userExists("test@test.com");
 
         assertTrue(userExists);
+    }
+
+    @Test
+    public void testInvalidateUserVerTokens() {
+        User user = User.builder().id(1).build();
+        VerificationToken token = VerificationToken.builder().token("validToken").build();
+        List<VerificationToken> activeTokens = List.of(token);
+
+        when(verTokenRepository.findAllActiveTokensByUser(user.getId())).thenReturn(activeTokens);
+
+        authenticationService.invalidateUserVerTokens(user);
+
+        verify(verTokenRepository, times(1)).save(any(VerificationToken.class));
+        assertTrue(token.isExpired()); // Ensure the token is marked as expired
+    }
+
+    @Test
+    public void testGenerateAndSaveActivationToken() {
+        User user = User.builder().id(1).build();
+
+        when(verTokenRepository.save(any(VerificationToken.class))).thenReturn(null); // Mocking save
+
+        String token = authenticationService.generateAndSaveActivationToken(user);
+
+        assertNotNull(token);
+        assertEquals(6, token.length()); // Ensure the generated token is of the correct length
+        verify(verTokenRepository, times(1)).save(any(VerificationToken.class));
+    }
+
+    @Test
+    public void testGenerateActivationCode() {
+        String activationCode = authenticationService.generateActivationCode(6);
+
+        assertNotNull(activationCode);
+        assertEquals(6, activationCode.length());
+        assertTrue(activationCode.matches("[0-9]+")); // Check if it contains only digits
+    }
+
+    @Test
+    public void testSaveUserToken() {
+        User user = User.builder().id(1).email("test@test.com").build();
+        String jwtToken = "testToken";
+
+        authenticationService.saveUserToken(user, jwtToken);
+
+        verify(tokenRepository, times(1)).save(any(Token.class));
+    }
+
+    @Test
+    public void testRevokeAllUserTokens() {
+        User user = User.builder().id(1).build();
+        Token validToken = Token.builder().token("validToken").build();
+        List<Token> validTokens = List.of(validToken);
+
+        when(tokenRepository.findAllValidTokenByUser(user.getId())).thenReturn(validTokens);
+
+        authenticationService.revokeAllUserTokens(user);
+
+        verify(tokenRepository, times(1)).saveAll(anyList());
+        assertTrue(validToken.isExpired());
+        assertTrue(validToken.isRevoked());
+    }
+
+    @Test
+    public void testActivateAccount_Success() throws MessagingException {
+        String token = "validToken";
+        User user = User.builder().id(1).enabled(false).build();
+        VerificationToken verificationToken = VerificationToken.builder().token(token).user(user).expires(LocalDateTime.now().plusMinutes(10)).build();
+
+        when(verTokenRepository.findByToken(token)).thenReturn(Optional.of(verificationToken));
+        when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
+
+        boolean result = authenticationService.activateAccount(token);
+
+        assertTrue(result);
+        verify(userRepository, times(1)).save(user);
+        assertTrue(user.isEnabled());
+    }
+
+    @Test
+    public void testActivateAccount_TokenExpired() {
+        String token = "expiredToken";
+        User user = User.builder().id(1).enabled(false).build();
+        VerificationToken expiredToken = VerificationToken.builder().token(token).user(user).expires(LocalDateTime.now().minusMinutes(1)).build();
+
+        when(verTokenRepository.findByToken(token)).thenReturn(Optional.of(expiredToken));
+
+        assertThrows(EmailValidationException.class, () -> authenticationService.activateAccount(token));
+    }
+
+    @Test
+    public void testActivateAccount_InvalidToken() {
+        String token = "invalidToken";
+
+        when(verTokenRepository.findByToken(token)).thenReturn(Optional.empty());
+
+        assertThrows(EmailValidationException.class, () -> authenticationService.activateAccount(token));
+    }
+
+    @Test
+    public void testActivateAccount_AlreadyActivated() {
+        String token = "validToken";
+        User user = User.builder().id(1).enabled(true).build();
+        VerificationToken verificationToken = VerificationToken.builder().token(token).user(user).expires(LocalDateTime.now().plusMinutes(10)).build();
+
+        when(verTokenRepository.findByToken(token)).thenReturn(Optional.of(verificationToken));
+        when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
+
+        assertThrows(EmailValidationException.class, () -> authenticationService.activateAccount(token));
     }
 }

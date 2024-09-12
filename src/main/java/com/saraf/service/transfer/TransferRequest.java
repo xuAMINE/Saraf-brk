@@ -25,8 +25,10 @@ public class TransferRequest {
     @Size(min = 11, message = "Please Enter a valid CCP number")
     private String ccp;
 
-//    @NotNull(message = "Payment method is required")
     @Enumerated(EnumType.STRING)
     private PaymentMethod paymentMethod;
+
+    @Size(min = 4, max = 4, message = "Code must be of length 4")
+    private String code;
 
 }

@@ -49,6 +49,7 @@ public class TransferService {
                 .status(Status.PENDING)
                 .transferDate(LocalDateTime.now())
                 .paymentMethod(request.getPaymentMethod())
+                .code(request.getCode())
                 .user(user)
                 .recipient(recipientRepository.findByUserIdAndAndCcp(getCurrentUser(), request.getCcp()))
                 .build();
@@ -69,12 +70,12 @@ public class TransferService {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    public Page<TransferDTO> getTransfersForAdmin(int page, int size) {
+    public Page<TransferAdminDTO> getTransfersForAdmin(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         return transferRepository.findAllForAdmin(pageable);
     }
 
-    public Page<TransferDTO> getPendingTransfersForAdmin(int page, int size) {
+    public Page<TransferAdminDTO> getPendingTransfersForAdmin(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         return transferRepository.findAllPendingForAdmin(pageable);
     }
@@ -113,6 +114,4 @@ public class TransferService {
     public String getUserPhoneNumberByTransferId(Integer transferId) {
         return transferRepository.findUserPhoneNumberByTransferId(transferId);
     }
-
-
 }

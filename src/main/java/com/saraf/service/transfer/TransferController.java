@@ -19,7 +19,7 @@ public class TransferController {
     private final S3Service s3Service;
 
     @PostMapping("/add")
-    public ResponseEntity<Transfer> add(@RequestBody TransferRequest request) {
+    public ResponseEntity<Transfer> add(@RequestBody @Valid TransferRequest request) {
         Transfer transfer = transferService.addTransfer(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(transfer);
     }
