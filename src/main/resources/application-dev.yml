@@ -1,12 +1,12 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/jwt_security
+    url: jdbc:postgresql://34.16.181.252:5432/sarafBRKdb
     username: postgres
-    password: postgres1
+    password: SarafBrkDb24$
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: update
     properties:
       hibernate:
         format_sql: true
@@ -39,6 +39,8 @@ application:
   mailing:
     frontend:
       activation-url: http://localhost:8088/api/v1/auth/activate-account?verToken=
+  cors:
+    origins: http://127.0.0.1:5501,http://172.31.18.95:8088
 
 server:
   port: 8088

@@ -38,7 +38,7 @@ public class EmailService {
         if (emailTemplateName == null) {
             templateName = "confirm-email";
         } else {
-            templateName = emailTemplateName.name();
+            templateName = emailTemplateName.getName();
         }
 
         MimeMessage mimeMessage = mailSender.createMimeMessage();
@@ -51,7 +51,7 @@ public class EmailService {
         Context context = new Context();
         context.setVariables(properties);
 
-        mimeMessageHelper.setFrom("sarafbrk@gmail.com");
+        mimeMessageHelper.setFrom("amine@sarafbrk.com");
         mimeMessageHelper.setTo(to);
         mimeMessageHelper.setSubject(subject);
 
@@ -67,8 +67,8 @@ public class EmailService {
         MimeMessage mimeMessage = mailSender.createMimeMessage();
         MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, MULTIPART_MODE_MIXED, UTF_8.name());
 
-        mimeMessageHelper.setFrom("sarafbrk@gmail.com");
-        mimeMessageHelper.setTo("sarafbrk@gmail.com");
+        mimeMessageHelper.setFrom("amine@sarafbrk.com");
+        mimeMessageHelper.setTo("contact@sarafbrk.com");
         mimeMessageHelper.setSubject("Contact Us Message");
         mimeMessageHelper.setText("You have received a new message from: \n\n" +
                                     "Name: " + name + "\n" +
@@ -88,7 +88,7 @@ public class EmailService {
         Context context = new Context();
         context.setVariables(properties);
 
-        mimeMessageHelper.setFrom("sarafbrk@gmail.com");
+        mimeMessageHelper.setFrom("amine@sarafbrk.com");
         mimeMessageHelper.setTo(email);
         mimeMessageHelper.setSubject("Thank you for contacting us!");
 

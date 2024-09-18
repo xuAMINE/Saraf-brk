@@ -44,7 +44,7 @@ class EmailServiceTest {
     void sendEmail_Success_WithSpecificTemplate() throws MessagingException, IOException {
         // Setup test data
         String to = "test@example.com";
-        String from = "sarafbrk@gmail.com";
+        String from = "amine@sarafbrk.com";
         String username = "TestUser";
         String confirmationUrl = "http://example.com/confirm";
         String activationCode = "123456";
@@ -83,7 +83,7 @@ class EmailServiceTest {
     void sendEmail_Success_WithDefaultTemplate() throws MessagingException, IOException {
         // Setup test data
         String to = "test@example.com";
-        String from = "sarafbrk@gmail.com";
+        String from = "amine@sarafbrk.com";
         String username = "TestUser";
         String confirmationUrl = "http://example.com/confirm";
         String activationCode = "123456";
