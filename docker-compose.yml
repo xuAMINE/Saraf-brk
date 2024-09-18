@@ -12,6 +12,9 @@ services:
       - DB_USERNAME=postgres
       - DB_PASSWORD=SarafBrkDb24$
       - APP_VERSION=1.0.1
+      - EMAIL_HOSTNAME=smtp.gmail.com
+      - EMAIL_USER_NAME=sarafbrk@gmail.com
+      - EMAIL_USER_PASSWORD=ftrs nzhz bpnt vftp
     restart: unless-stopped
 
 networks:
