@@ -112,6 +112,11 @@ jobs:
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > sarafKEY.pem
           chmod 600 sarafKEY.pem  # Ensure proper permissions for the key
 
+      - name: Create SSH directory
+        run: |
+          mkdir -p ~/.ssh  # Create the .ssh directory
+          touch ~/.ssh/known_hosts  # Create the known_hosts file
+
       - name: Add EC2 host to known_hosts
         run: |
           ssh-keyscan -H ${{ secrets.EC2_PUBLIC_IP }} >> ~/.ssh/known_hosts
