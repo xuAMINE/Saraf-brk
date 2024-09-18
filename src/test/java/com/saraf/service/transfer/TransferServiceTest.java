@@ -1,6 +1,7 @@
 package com.saraf.service.transfer;
 
 import com.saraf.security.exception.TransferNotFoundException;
+import com.saraf.security.exception.TransferNotPendingException;
 import com.saraf.security.user.Role;
 import com.saraf.security.user.User;
 import com.saraf.security.user.UserRepository;
@@ -92,7 +93,6 @@ class TransferServiceTest {
         when(rateRepository.findTopByOrderByIdDesc()).thenReturn(rate);
     }
 
-
     @Test
     void addTransfer() {
         TransferRequest request = TransferRequest.builder()
@@ -114,7 +114,8 @@ class TransferServiceTest {
     void getTransfersForUser() {
         int page = 0;
         int size = 10;
-        TransferDTO transferDTO = new TransferDTO(1, BigDecimal.valueOf(120), BigDecimal.valueOf(108), Status.PENDING, LocalDateTime.now(), "Jane Doe", "receipt1");
+        TransferDTO transferDTO = new TransferDTO(1, BigDecimal.valueOf(120), BigDecimal.valueOf(108), Status.PENDING,
+                LocalDateTime.now(), "Jane Doe", "receipt1", PaymentMethod.VENMO, "1111");
 
         Page<TransferDTO> pageOfTransfers = new PageImpl<>(List.of(transferDTO));
 
@@ -128,23 +129,62 @@ class TransferServiceTest {
     }
 
     @Test
-    @WithMockUser(roles = "ADMIN")
-    void getTransfersForAdmin() {
+    @WithMockUser(roles = "USER")
+    void getNonCancelledTransfersForUser() {
         int page = 0;
         int size = 10;
-        TransferDTO transferDTO = new TransferDTO(1, BigDecimal.valueOf(120), BigDecimal.valueOf(108), Status.PENDING, LocalDateTime.now(), "Jane Doe", "receipt1");
+        TransferDTO transferDTO = new TransferDTO(1, BigDecimal.valueOf(120), BigDecimal.valueOf(108), Status.PENDING,
+                LocalDateTime.now(), "Jane Doe", "receipt1", PaymentMethod.VENMO, "1111");
 
         Page<TransferDTO> pageOfTransfers = new PageImpl<>(List.of(transferDTO));
 
-        when(transferRepository.findAllForAdmin(PageRequest.of(page, size))).thenReturn(pageOfTransfers);
+        when(transferRepository.findAllNotCancelled(1, PageRequest.of(page, size))).thenReturn(pageOfTransfers);
 
-        Page<TransferDTO> transfers = transferService.getTransfersForAdmin(page, size);
+        Page<TransferDTO> transfers = transferService.getNonCancelledTransfersForUser(page, size);
 
         assertThat(transfers).isNotNull();
         assertThat(transfers.getTotalElements()).isEqualTo(1);
         assertThat(transfers.getContent().get(0)).isEqualTo(transferDTO);
     }
 
+    @Test
+    @WithMockUser(roles = "ADMIN")
+    void getTransfersForAdmin() {
+        int page = 0;
+        int size = 10;
+        TransferAdminDTO transferDTO = new TransferAdminDTO(1, BigDecimal.valueOf(120), BigDecimal.valueOf(108), Status.PENDING,
+                LocalDateTime.now(), "Jane Doe", "receipt1", PaymentMethod.ZELLE,
+                "2222", "test1", "testLast");
+
+        Page<TransferAdminDTO> pageOfTransfers = new PageImpl<>(List.of(transferDTO));
+
+        when(transferRepository.findAllForAdmin(PageRequest.of(page, size))).thenReturn(pageOfTransfers);
+
+        Page<TransferAdminDTO> transfers = transferService.getTransfersForAdmin(page, size);
+
+        assertThat(transfers).isNotNull();
+        assertThat(transfers.getTotalElements()).isEqualTo(1);
+        assertThat(transfers.getContent().get(0)).isEqualTo(transferDTO);
+    }
+
+    @Test
+    @WithMockUser(roles = "ADMIN")
+    void getPendingTransfersForAdmin() {
+        int page = 0;
+        int size = 10;
+        TransferAdminDTO transferDTO = new TransferAdminDTO(1, BigDecimal.valueOf(120), BigDecimal.valueOf(108), Status.PENDING,
+                LocalDateTime.now(), "Jane Doe", "receipt1", PaymentMethod.ZELLE, "2222", "test1", "testLast");
+
+        Page<TransferAdminDTO> pageOfTransfers = new PageImpl<>(List.of(transferDTO));
+
+        when(transferRepository.findAllPendingForAdmin(PageRequest.of(page, size))).thenReturn(pageOfTransfers);
+
+        Page<TransferAdminDTO> transfers = transferService.getPendingTransfersForAdmin(page, size);
+
+        assertThat(transfers).isNotNull();
+        assertThat(transfers.getTotalElements()).isEqualTo(1);
+        assertThat(transfers.getContent().get(0)).isEqualTo(transferDTO);
+    }
 
     @Test
     void updateStatus() {
@@ -165,6 +205,34 @@ class TransferServiceTest {
     }
 
     @Test
+    void cancelTransfer() {
+        Transfer transfer = new Transfer();
+        transfer.setId(1);
+        transfer.setStatus(Status.PENDING); // Ensure the status is PENDING for cancellation
+
+        Mockito.when(transferRepository.findById(1)).thenReturn(Optional.of(transfer));
+
+        Mockito.when(transferRepository.save(transfer)).thenReturn(transfer);
+
+        Transfer canceledTransfer = transferService.cancelTransfer(1);
+
+        assertThat(canceledTransfer.getStatus()).isEqualTo(Status.CANCELED);
+        verify(transferRepository).save(transfer);
+    }
+
+    @Test
+    void cancelTransfer_NotPending() {
+        Transfer transfer = new Transfer();
+        transfer.setId(1);
+        transfer.setStatus(Status.RECEIVED); // not PENDING
+
+        Mockito.when(transferRepository.findById(1)).thenReturn(Optional.of(transfer));
+
+        assertThrows(TransferNotPendingException.class, () -> transferService.cancelTransfer(1));
+        verify(transferRepository, never()).save(any(Transfer.class));
+    }
+
+    @Test
     void getReceiptName() {
         Transfer transfer = new Transfer();
         transfer.setId(1);
@@ -181,4 +249,16 @@ class TransferServiceTest {
         Mockito.when(transferRepository.findById(1)).thenReturn(Optional.empty());
         assertThrows(TransferNotFoundException.class, () -> transferService.getReceiptName(1));
     }
+
+    @Test
+    void getUserPhoneNumberByTransferId() {
+        String expectedPhoneNumber = "555-1234";
+
+        Mockito.when(transferRepository.findUserPhoneNumberByTransferId(1)).thenReturn(expectedPhoneNumber);
+
+        String phoneNumber = transferService.getUserPhoneNumberByTransferId(1);
+
+        assertThat(phoneNumber).isEqualTo(expectedPhoneNumber);
+    }
+
 }

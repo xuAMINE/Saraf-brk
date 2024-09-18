@@ -2,6 +2,7 @@ package com.saraf.security.config;
 
 import com.saraf.security.oauth2.CustomOAuth2SuccessHandler;
 import com.saraf.security.oauth2.CustomOAuth2UserService;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -92,6 +93,13 @@ public class SecurityConfiguration {
                         logout.logoutUrl("/api/v1/auth/logout")
                                 .addLogoutHandler(logoutHandler)
                                 .logoutSuccessHandler((request, response, authentication) -> SecurityContextHolder.clearContext())
+                )
+                .exceptionHandling(exception -> exception
+                        // Redirect to custom 404 page when resource not found
+                        .authenticationEntryPoint((request, response, authException) -> {
+                            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                            response.sendRedirect("http://127.0.0.1:5501/Saraf-BRK/pages/404.html"); // Assuming the 404 page is in the static folder
+                        })
                 );
 
         return http.build();

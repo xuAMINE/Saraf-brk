@@ -25,6 +25,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.security.Principal;
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -66,67 +67,6 @@ public class AuthenticationService {
         .build();
   }
 
-  private void sendValidationEmail(User user) throws MessagingException {
-    var newToken = generateAndSaveActivationToken(user);
-
-    emailService.sendEmail(
-            user.getEmail(),
-            user.getFullName(),
-            EmailTemplateName.ACTIVATE_ACCOUNT,
-            activationUrl+newToken,
-            newToken,
-            "Account activation"
-    );
-  }
-
-  public void resendEmailVerification(String email) throws MessagingException {
-    var user = repository.findByEmail(email)
-            .orElseThrow(() -> new UsernameNotFoundException(email));
-
-    if (user.isEnabled())
-      throw new IllegalStateException("Email is already verified");
-
-    // Invalidate existing tokens
-    invalidateUserVerTokens(user);
-    sendValidationEmail(user);
-  }
-
-  private void invalidateUserVerTokens(User user) {
-    List<VerificationToken> activeTokens = verTokenRepository.findAllActiveTokensByUser(user.getId());
-
-    for (VerificationToken verificationToken : activeTokens) {
-      verificationToken.markAsExpired();
-      verTokenRepository.save(verificationToken);
-    }
-  }
-
-  private String generateAndSaveActivationToken(User user) {
-    String generatedToken = generateActivationCode(6);
-    var verToken = VerificationToken.builder()
-            .token(generatedToken)
-            .created(LocalDateTime.now())
-            .expires(LocalDateTime.now().plusMinutes(15))
-            .user(user)
-            .build();
-    verTokenRepository.save(verToken);
-
-    return generatedToken;
-  }
-
-  private String generateActivationCode(int length) {
-    String characters = "0123456789";
-    StringBuilder codeBuilder = new StringBuilder();
-    SecureRandom random = new SecureRandom();
-
-    for (int i = 0; i < length; i++) {
-      int randomChar = random.nextInt(characters.length()); // 0..9
-      codeBuilder.append(characters.charAt(randomChar));
-    }
-
-    return codeBuilder.toString();
-  }
-
-
   public AuthenticationResponse authenticate(AuthenticationRequest request) {
     try {
       authenticationManager.authenticate(
@@ -156,24 +96,112 @@ public class AuthenticationService {
     revokeAllUserTokens(user);
     saveUserToken(user, jwtToken);
     return AuthenticationResponse.builder()
-        .accessToken(jwtToken)
-        .refreshToken(refreshToken)
-        .role(role)
-        .build();
+            .accessToken(jwtToken)
+            .refreshToken(refreshToken)
+            .role(role)
+            .build();
   }
 
-  private void saveUserToken(User user, String jwtToken) {
+  @Transactional
+  public boolean activateAccount(String token) throws MessagingException {
+    if (token == null || token.isEmpty()) {
+      throw new EmailValidationException("Code can not be empty");
+    }
+
+    VerificationToken savedToken = verTokenRepository.findByToken(token)
+            .orElseThrow(() -> new EmailValidationException("Invalid code please try again"));
+
+    if (savedToken.isExpired()) {
+      throw new EmailValidationException("code has expired. Please click on \"Resend Email\" to receive a new one.");
+    }
+
+    var user = repository.findById(savedToken.getUser().getId())
+            .orElseThrow(() -> new UsernameNotFoundException("User Not Found!"));
+
+    if (user.isEnabled()) {
+      throw new EmailValidationException("Account is already activated, please head to login page.");
+    }
+
+    user.setEnabled(true);
+
+    repository.save(user);
+    savedToken.setValidatedAt(LocalDateTime.now());
+    verTokenRepository.save(savedToken);
+    return true;
+  }
+
+  void saveUserToken(User user, String jwtToken) {
     var token = Token.builder()
-        .user(user)
-        .token(jwtToken)
-        .tokenType(TokenType.BEARER)
-        .expired(false)
-        .revoked(false)
-        .build();
+            .user(user)
+            .token(jwtToken)
+            .tokenType(TokenType.BEARER)
+            .expired(false)
+            .revoked(false)
+            .build();
     tokenRepository.save(token);
   }
 
-  private void revokeAllUserTokens(User user) {
+  private void sendValidationEmail(User user) throws MessagingException {
+    var newToken = generateAndSaveActivationToken(user);
+
+    emailService.sendEmail(
+            user.getEmail(),
+            user.getFullName(),
+            EmailTemplateName.ACTIVATE_ACCOUNT,
+            activationUrl+newToken,
+            newToken,
+            "Account activation"
+    );
+  }
+
+  public void resendEmailVerification(String email) throws MessagingException {
+    var user = repository.findByEmail(email)
+            .orElseThrow(() -> new UsernameNotFoundException(email));
+
+    if (user.isEnabled())
+      throw new IllegalStateException("Email is already verified");
+
+    // Invalidate existing tokens
+    invalidateUserVerTokens(user);
+    sendValidationEmail(user);
+  }
+
+  void invalidateUserVerTokens(User user) {
+    List<VerificationToken> activeTokens = verTokenRepository.findAllActiveTokensByUser(user.getId());
+
+    for (VerificationToken verificationToken : activeTokens) {
+      verificationToken.markAsExpired();
+      verTokenRepository.save(verificationToken);
+    }
+  }
+
+  String generateAndSaveActivationToken(User user) {
+    String generatedToken = generateActivationCode(6);
+    var verToken = VerificationToken.builder()
+            .token(generatedToken)
+            .created(LocalDateTime.now())
+            .expires(LocalDateTime.now().plusMinutes(15))
+            .user(user)
+            .build();
+    verTokenRepository.save(verToken);
+
+    return generatedToken;
+  }
+
+  String generateActivationCode(int length) {
+    String characters = "0123456789";
+    StringBuilder codeBuilder = new StringBuilder();
+    SecureRandom random = new SecureRandom();
+
+    for (int i = 0; i < length; i++) {
+      int randomChar = random.nextInt(characters.length()); // 0..9
+      codeBuilder.append(characters.charAt(randomChar));
+    }
+
+    return codeBuilder.toString();
+  }
+
+  void revokeAllUserTokens(User user) {
     var validUserTokens = tokenRepository.findAllValidTokenByUser(user.getId());
     if (validUserTokens.isEmpty())
       return;
@@ -211,34 +239,6 @@ public class AuthenticationService {
         new ObjectMapper().writeValue(response.getOutputStream(), authResponse);
       }
     }
-  }
-
-  @Transactional
-  public boolean activateAccount(String token) throws MessagingException {
-    if (token == null || token.isEmpty()) {
-      throw new EmailValidationException("Code can not be empty");
-    }
-
-    VerificationToken savedToken = verTokenRepository.findByToken(token)
-            .orElseThrow(() -> new EmailValidationException("Invalid code please try again"));
-
-    if (savedToken.isExpired()) {
-      throw new EmailValidationException("code has expired. Please click on \"Resend Email\" to receive a new one.");
-    }
-
-    var user = repository.findById(savedToken.getUser().getId())
-            .orElseThrow(() -> new UsernameNotFoundException("User Not Found!"));
-
-    if (user.isEnabled()) {
-      throw new EmailValidationException("Account is already activated, please head to login page.");
-    }
-
-    user.setEnabled(true);
-
-    repository.save(user);
-    savedToken.setValidatedAt(LocalDateTime.now());
-    verTokenRepository.save(savedToken);
-    return true;
   }
 
   public boolean userExists(String email) {

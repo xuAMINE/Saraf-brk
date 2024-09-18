@@ -1,13 +1,9 @@
 package com.saraf.security.auth;
 
-import com.saraf.security.admin.ApiResponse;
 import com.saraf.security.config.JwtService;
 import com.saraf.security.email.ResendVerificationRequest;
 import com.saraf.security.exception.EmailValidationException;
-import com.saraf.security.exception.InvalidTokenException;
-import com.saraf.security.exception.TokenExpiredException;
 import com.saraf.security.user.Role;
-import com.saraf.security.user.User;
 import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -15,8 +11,6 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -97,5 +91,4 @@ public class AuthenticationController {
       return ResponseEntity.status(401).body(false);
     }
   }
-
 }

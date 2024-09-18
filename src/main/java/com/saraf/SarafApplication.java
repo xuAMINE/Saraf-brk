@@ -8,6 +8,7 @@ import com.saraf.security.user.UserRepository;
 import com.saraf.service.rate.ExchangeRateService;
 import com.saraf.service.recipient.RecipientRequest;
 import com.saraf.service.recipient.RecipientService;
+import com.saraf.service.transfer.PaymentMethod;
 import com.saraf.service.transfer.TransferRequest;
 import com.saraf.service.transfer.TransferService;
 import org.springframework.boot.CommandLineRunner;
@@ -32,7 +33,7 @@ public class SarafApplication {
 		SpringApplication.run(SarafApplication.class, args);
 	}
 
-	@Bean
+	/*@Bean
 	public CommandLineRunner commandLineRunner(
 			AuthenticationService service,
 			RecipientService recipientService,
@@ -48,7 +49,7 @@ public class SarafApplication {
 					.email("amine@zirek.com")
 					.password("SarafBrk")
 					.build();
-			System.out.println("Admin token: " + service.register(admin).getAccessToken());
+			System.out.println(service.register(admin).getAccessToken());
 
 					User user = userRepository.findByEmail(admin.getEmail()).orElseThrow();
 			user.setEnabled(true);
@@ -75,10 +76,11 @@ public class SarafApplication {
 			var transfer = TransferRequest.builder()
 					.amount(BigDecimal.valueOf(400))
 					.ccp("002938457589")
+					.paymentMethod(PaymentMethod.ZELLE)
 					.build();
 			transferService.addTransfer(transfer);
 
 			SecurityContextHolder.clearContext();
 		};
-	}
+	}*/
 }

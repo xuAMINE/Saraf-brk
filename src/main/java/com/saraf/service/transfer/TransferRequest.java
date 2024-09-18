@@ -1,5 +1,7 @@
 package com.saraf.service.transfer;
 
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -22,5 +24,11 @@ public class TransferRequest {
 
     @Size(min = 11, message = "Please Enter a valid CCP number")
     private String ccp;
+
+    @Enumerated(EnumType.STRING)
+    private PaymentMethod paymentMethod;
+
+    @Size(min = 4, max = 4, message = "Code must be of length 4")
+    private String code;
 
 }

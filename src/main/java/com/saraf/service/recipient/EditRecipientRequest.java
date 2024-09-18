@@ -15,9 +15,11 @@ public class EditRecipientRequest {
 
         @NotEmpty(message = "Please provide first and last Name.")
         @Size(min = 3, message = "Name should be at least 3 characters long.")
+        @Size(max = 25, message = "Name is too long.")
         private String firstName;
         @NotEmpty(message = "Please provide first and last Name.")
         @Size(min = 3, message = "Name should be at least 3 characters long.")
+        @Size(max = 25, message = "Name is too long.")
         private String lastName;
         private String phoneNumber;
         private boolean doContact;

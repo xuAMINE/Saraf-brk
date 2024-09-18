@@ -4,6 +4,8 @@ import com.saraf.security.config.JwtService;
 import com.saraf.security.email.ResendVerificationRequest;
 import com.saraf.security.exception.EmailValidationException;
 import com.saraf.security.user.Role;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -143,7 +145,22 @@ public class AuthenticationControllerTest {
                 .andExpect(jsonPath("$.access_token").value("token"));
     }
 
+    @Test
+    void testRefreshToken_ValidRequest() throws Exception {
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        HttpServletResponse response = mock(HttpServletResponse.class);
 
+        // Mock the behavior of refreshToken in the service
+        doNothing().when(authenticationService).refreshToken(any(HttpServletRequest.class), any(HttpServletResponse.class));
+
+        // Perform a POST request to the refresh-token endpoint
+        mockMvc.perform(post("/api/v1/auth/refresh-token")
+                        .header("Authorization", "Bearer validRefreshToken"))
+                .andExpect(status().isOk());
+
+        // Verify that the service method is called
+        verify(authenticationService, times(1)).refreshToken(any(HttpServletRequest.class), any(HttpServletResponse.class));
+    }
 
     @Test
     void resendVerification_Successful() throws Exception {

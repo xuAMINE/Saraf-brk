@@ -10,6 +10,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring6.SpringTemplateEngine;
 
@@ -116,30 +117,77 @@ class EmailServiceTest {
         assertEquals("Processed Default Template", sentMessage.getContent().toString().trim());
     }
 
-/*    @Test
-    void sendEmail_ThrowsMessagingException() throws MessagingException {
+    @Test
+    void sendContactUsEmail_Success() throws MessagingException, IOException {
         // Setup test data
-        String to = "test@example.com";
-        String username = "TestUser";
-        String confirmationUrl = "http://example.com/confirm";
-        String activationCode = "123456";
-        String subject = "Test Subject";
-        EmailTemplateName emailTemplateName = EmailTemplateName.ACTIVATE_ACCOUNT;
+        String name = "John Doe";
+        String email = "john.doe@example.com";
+        String message = "This is a test message.";
 
         // Mock MimeMessage creation
         when(mailSender.createMimeMessage()).thenReturn(mimeMessage);
 
-        // Mock an exception being thrown when attempting to send the email
-        doThrow(new MessagingException("Failed to send email")).when(mailSender).send(any(MimeMessage.class));
+        // Call the sendContactUsEmail method
+        emailService.sendContactUsEmail(name, email, message);
 
-        // Call the sendEmail method and expect a MessagingException
-        MessagingException thrown = assertThrows(MessagingException.class, () ->
-                emailService.sendEmail(to, username, emailTemplateName, confirmationUrl, activationCode, subject)
+        when(mimeMessage.getSubject()).thenReturn("Contact Us Message");
+        when(mimeMessage.getContent()).thenReturn(
+                "You have received a new message from: \n" +
+                    "Name: John Doe\n" +
+                    "Email: john.doe@example.com\n" +
+                    "Message: This is a test message."
         );
 
-        // Verify the exception message
-        assertEquals("Failed to send email", thrown.getMessage());
 
-    }*/
+        // Capture the MimeMessage sent by the mail sender
+        ArgumentCaptor<MimeMessage> messageCaptor = ArgumentCaptor.forClass(MimeMessage.class);
+        verify(mailSender, times(1)).send(messageCaptor.capture());
 
+        // Access the captured MimeMessage to perform assertions
+        MimeMessage sentMessage = messageCaptor.getValue();
+
+        MimeMessageHelper helper = new MimeMessageHelper(sentMessage, true);
+
+        assertEquals("Contact Us Message", sentMessage.getSubject());
+        assertEquals(
+                "You have received a new message from: \n" +
+                        "Name: John Doe\n" +
+                        "Email: john.doe@example.com\n" +
+                        "Message: This is a test message.",
+                sentMessage.getContent().toString().trim()
+        );
+    }
+
+    @Test
+    void sendContactConfirmEmail_Success() throws MessagingException, IOException {
+        // Setup test data
+        String name = "John Doe";
+        String email = "john.doe@example.com";
+        String message = "Thank you for your message.";
+
+        // Mock MimeMessage creation and content
+        when(mailSender.createMimeMessage()).thenReturn(mimeMessage);
+
+        // Mock the template engine for the CONTACT_CONFIRM template
+        when(templateEngine.process(anyString(), any(Context.class))).thenReturn("Processed Contact Confirm Template");
+        when(mimeMessage.getRecipients(MimeMessage.RecipientType.TO)).thenReturn(new InternetAddress[]{new InternetAddress(email)});
+        when(mimeMessage.getSubject()).thenReturn("Thank you for contacting us!");
+        when(mimeMessage.getContent()).thenReturn("Processed Contact Confirm Template");
+
+        // Call the sendContactConfirmEmail method
+        emailService.sendContactConfirmEmail(name, email, message);
+
+        // Capture the MimeMessage sent by the mail sender
+        ArgumentCaptor<MimeMessage> messageCaptor = ArgumentCaptor.forClass(MimeMessage.class);
+        verify(mailSender, times(1)).send(messageCaptor.capture());
+
+        // Access the captured MimeMessage to perform assertions
+        MimeMessage sentMessage = messageCaptor.getValue();
+
+        MimeMessageHelper helper = new MimeMessageHelper(sentMessage, true);
+
+        assertEquals(email, sentMessage.getRecipients(MimeMessage.RecipientType.TO)[0].toString());
+        assertEquals("Thank you for contacting us!", sentMessage.getSubject());
+        assertEquals("Processed Contact Confirm Template", sentMessage.getContent().toString().trim());
+    }
 }

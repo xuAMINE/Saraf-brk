@@ -5,10 +5,7 @@ import com.saraf.security.exception.TransferNotFoundException;
 import com.saraf.security.user.RoleService;
 import com.saraf.security.user.RoleUpdateRequest;
 
-import com.saraf.service.transfer.Transfer;
-import com.saraf.service.transfer.TransferDTO;
-import com.saraf.service.transfer.TransferService;
-import com.saraf.service.transfer.UpdateTransferStatusDTO;
+import com.saraf.service.transfer.*;
 import io.swagger.v3.oas.annotations.Hidden;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -31,9 +28,15 @@ public class AdminController {
     private final S3Service s3Service;
 
     @GetMapping("/transfers")
-    public Page<TransferDTO> getTransfers(@RequestParam(defaultValue = "0") int page,
+    public Page<TransferAdminDTO> getTransfers(@RequestParam(defaultValue = "0") int page,
                                           @RequestParam(defaultValue = "20") int size) {
         return transferService.getTransfersForAdmin(page, size);
+    }
+
+    @GetMapping("/transfers/pending")
+    public Page<TransferAdminDTO> getPendingTransfers(@RequestParam(defaultValue = "0") int page,
+                                                      @RequestParam(defaultValue = "20") int size) {
+        return transferService.getPendingTransfersForAdmin(page, size);
     }
 
     @PostMapping("/upload-receipt/{id}")

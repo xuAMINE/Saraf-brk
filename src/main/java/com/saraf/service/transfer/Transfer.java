@@ -24,7 +24,8 @@ import java.time.LocalDateTime;
 public class Transfer {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.TABLE, generator = "transfer_generator")
+    @TableGenerator(name = "transfer_generator", initialValue = 1001)
     private Integer id;
     private BigDecimal amount;
     private BigDecimal amountReceived;
@@ -32,7 +33,11 @@ public class Transfer {
     @Enumerated(EnumType.STRING)
     private Status status;
 
+    private String code;
     private LocalDateTime transferDate;
+
+    @Enumerated(EnumType.STRING)
+    private PaymentMethod paymentMethod;
     private String receipt;
 
     @ManyToOne(fetch = FetchType.LAZY)

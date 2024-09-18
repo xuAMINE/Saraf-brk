@@ -35,6 +35,7 @@ public class User implements UserDetails {
   @Column(unique = true)
   private String email;
   private String password;
+  private String phoneNumber;
   private boolean enabled;
 
   @Enumerated(EnumType.STRING)

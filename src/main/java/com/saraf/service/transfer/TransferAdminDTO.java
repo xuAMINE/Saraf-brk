@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 @Data
 @Builder
 @AllArgsConstructor
-public class TransferDTO {
+public class TransferAdminDTO {
     private Integer id;
     private BigDecimal amount;
     private BigDecimal amountReceived;
@@ -20,5 +20,6 @@ public class TransferDTO {
     private String receipt;
     private PaymentMethod paymentMethod;
     private String code;
+    private String firstName;
+    private String lastName;
 }
-
