@@ -103,23 +103,24 @@ jobs:
             APP_VERSION=${{ steps.extract_version.outputs.VERSION }}
 
   deploy:
-    name: Deploy Backend
+    name: Delpoy Backend
     runs-on: ubuntu-latest
-    needs: [ build-image ]
+    needs: [build-image]
     steps:
-      - name: Create deployment folder
+      - name: Create SSH key file
         run: |
-          ssh -v -i sarafKEY.pem ec2-user@${{ secrets.EC2_PUBLIC_IP }} "mkdir -p ci-cd"
-          if [ $? -ne 0 ]; then exit 1; fi  # Check exit code for SSH
+          echo "${{ secrets.EC2_PRIVATE_KEY }}" > sarafKEY.pem
+          chmod 600 sarafKEY.pem
+
+      - name: Create deployment folder
+        run: ssh -i sarafKEY.pem ec2-user@${{ secrets.EC2_PUBLIC_IP }} "mkdir -p ci-cd"
 
       - name: Copy docker-compose file
-        run: |
-          scp -v docker-compose.yml ec2-user@${{ secrets.EC2_PUBLIC_IP }}:ci-cd/docker-compose.yml
-          if [ $? -ne 0 ]; then exit 1; fi  # Check exit code for SCP
+        run: scp docker-compose.yml ec2-user@${{ secrets.EC2_PUBLIC_IP }}:ci-cd/docker-compose.yml
 
       - name: Set ENV variables and deploy
         run: |
-          ssh -v -i sarafKEY.pem ec2-user@${{ secrets.EC2_PUBLIC_IP }} <<EOF
+          ssh -i sarafKEY.pem ec2-user@${{ secrets.EC2_PUBLIC_IP }} <<EOF
           export EMAIL_HOSTNAME=${{ secrets.EMAIL_HOSTNAME }}
           export EMAIL_USER_NAME=${{ secrets.EMAIL_USER_NAME }}
           export EMAIL_USER_PASSWORD=${{ secrets.EMAIL_USER_PASSWORD }}
@@ -127,5 +128,3 @@ jobs:
           docker-compose -f docker-compose.yml pull -q
           docker-compose -f docker-compose.yml up -d
           EOF
-          if [ $? -ne 0 ]; then exit 1; fi  # Check exit code for SSH
-  
