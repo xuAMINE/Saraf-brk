@@ -107,17 +107,18 @@ jobs:
     runs-on: ubuntu-latest
     needs: [ build-image ]
     steps:
-      - name: Copy PEM file
+      - name: Create PEM file from secret
         run: |
           mkdir -p ~/.ssh
-          echo "${{ secrets.EC2_PRIVATE_KEY }}" > ~/.ssh/sarafKEY.pem
+          echo "${{ secrets.AWS_EC2_SSH_KEY }}" > ~/.ssh/sarafKEY.pem
           chmod 600 ~/.ssh/sarafKEY.pem
 
       - name: SSH into EC2 and Deploy
         run: |
           ssh -o StrictHostKeyChecking=no -i ~/.ssh/sarafKEY.pem ec2-user@13.57.200.32 << 'EOF'
-          docker pull ${{ secrets.DOCKERHUB_USERNAME }}/srf-api:latest
-          docker stop srf-container || true
-          docker rm srf-container || true
-          docker run -d --name srf-container -p 8080:8080 ${{ secrets.DOCKERHUB_USERNAME }}/srf-api:latest
+          sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/srf-api:latest
+          sudo docker stop srf-container || true
+          sudo docker rm srf-container || true
+          sudo docker run -d --name srf-container -p 8080:8080 ${{ secrets.DOCKERHUB_USERNAME }}/srf-api:latest
           EOF
+  
