@@ -17,4 +17,4 @@ CMD java -jar \
          -Dspring.datasource.url=${DB_URL} \
          -Dspring.datasource.username=${DB_USERNAME} \
          -Dspring.datasource.password=${DB_PASSWORD} \
-         security-${APP_VERSION}.jar
+         security-1.0.1.jar
