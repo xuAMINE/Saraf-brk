@@ -119,5 +119,5 @@ jobs:
           docker pull ${{ secrets.DOCKERHUB_USERNAME }}/srf-api:latest
           docker stop srf-container || true
           docker rm srf-container || true
-          docker run -d --name srf-container -p 8080:8080 ${{ secrets.DOCKERHUB_USERNAME }}/srf-api:latest
+          docker run -d --name srf-container -p 8088:8088 ${{ secrets.DOCKERHUB_USERNAME }}/srf-api:latest
           EOF
