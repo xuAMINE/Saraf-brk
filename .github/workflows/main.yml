@@ -110,35 +110,25 @@ jobs:
       - name: Create SSH key file
         run: |
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > sarafKEY.pem
-          chmod 600 sarafKEY.pem  # Ensure proper permissions for the key
+          chmod 600 sarafKEY.pem
 
       - name: Create SSH directory
         run: |
-          mkdir -p ~/.ssh  # Create the .ssh directory
-          touch ~/.ssh/known_hosts  # Create the known_hosts file
+          mkdir -p ~/.ssh  
+          touch ~/.ssh/known_hosts
 
       - name: Add EC2 host to known_hosts
         run: |
           ssh-keyscan -H ${{ secrets.EC2_PUBLIC_IP }} >> ~/.ssh/known_hosts
 
-      - name: Create deployment folder on EC2
+      - name: Copy Docker Compose file to EC2
         run: |
-          ssh -i sarafKEY.pem ec2-user@${{ secrets.EC2_PUBLIC_IP }} "mkdir -p ci-cd"
-          if [ $? -ne 0 ]; then exit 1; fi  # Check SSH exit code
+          scp -i sarafKEY.pem docker-compose.yml ubuntu@${{ secrets.EC2_PUBLIC_IP }}:/home/ubuntu/docker-compose.yml
 
-      - name: Copy docker-compose file to EC2
+      - name: SSH into EC2 and pull the Docker image
         run: |
-          scp -i sarafKEY.pem docker-compose.yml ec2-user@${{ secrets.EC2_PUBLIC_IP }}:ci-cd/docker-compose.yml
-          if [ $? -ne 0 ]; then exit 1; fi  # Check SCP exit code
+          ssh -i sarafKEY.pem ubuntu@${{ secrets.EC2_PUBLIC_IP }} "docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_TOKEN }} && docker pull ${{ secrets.DOCKERHUB_USERNAME }}/srf-api:${{ steps.extract_version.outputs.VERSION }}"
 
-      - name: Set environment variables and deploy on EC2
+      - name: SSH into EC2 and deploy container
         run: |
-          ssh -i sarafKEY.pem ec2-user@${{ secrets.EC2_PUBLIC_IP }} <<EOF
-          export EMAIL_HOSTNAME=${{ secrets.EMAIL_HOSTNAME }}
-          export EMAIL_USER_NAME=${{ secrets.EMAIL_USER_NAME }}
-          export EMAIL_USER_PASSWORD=${{ secrets.EMAIL_USER_PASSWORD }}
-          cd ci-cd
-          docker-compose -f docker-compose.yml pull -q
-          docker-compose -f docker-compose.yml up -d
-          EOF
-          if [ $? -ne 0 ]; then exit 1; fi  # Check SSH exit code
+          ssh -i sarafKEY.pem ubuntu@${{ secrets.EC2_PUBLIC_IP }} "docker-compose -f /home/ubuntu/docker-compose.yml up -d"
