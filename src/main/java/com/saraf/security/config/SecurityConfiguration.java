@@ -99,17 +99,17 @@ public class SecurityConfiguration {
                         }));
 
         // Conditionally require HTTPS based on the active profile
-        if (!isTestProfileActive()) {
+        if (isProdProfileActive()) {
             http.requiresChannel(channel -> channel.anyRequest().requiresSecure());
         }
 
         return http.build();
     }
 
-    private boolean isTestProfileActive() {
+    private boolean isProdProfileActive() {
         boolean isTestProfileActive = false;
         for (String profile : env.getActiveProfiles()) {
-            if ("test".equals(profile)) {
+            if ("prod".equals(profile)) {
                 isTestProfileActive = true;
                 break;
             }

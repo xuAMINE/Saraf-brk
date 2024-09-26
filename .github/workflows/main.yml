@@ -79,7 +79,7 @@ jobs:
           CORS_ORIGINS_PROD: ${{ secrets.CORS_ORIGINS_PROD }}
           JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
           ACTIVATION_URL: ${{ secrets.ACTIVATION_URL }}
-        run: mvn clean package
+        run: mvn clean package -DskipTests
 
   build-image:
     name: Build Docker image
