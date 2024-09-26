@@ -65,21 +65,18 @@ public class SecurityConfiguration {
         http
                 .cors(withDefaults())
                 .csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(req ->
-                        req
-                                .requestMatchers(WHITE_LIST_URL)
-                                .permitAll()
-                                .requestMatchers(USER_LIST_URL).hasAnyRole(ADMIN.name(), MANAGER.name(), USER.name())
-                                .requestMatchers("/api/v1/management/**").hasAnyRole(ADMIN.name(), MANAGER.name())
-                                .requestMatchers(GET, "/api/v1/management/**").hasAnyAuthority(ADMIN_READ.name(), MANAGER_READ.name())
-                                .requestMatchers(GET, "/api/v1/rate/**").hasAnyAuthority(ADMIN_READ.name(), MANAGER_READ.name(), USER.name())
-                                .requestMatchers(POST, "/api/v1/rate/**").hasAnyAuthority(ADMIN_CREATE.name(), MANAGER_CREATE.name())
-                                .requestMatchers(PUT, "/api/v1/management/**").hasAnyAuthority(ADMIN_UPDATE.name(), MANAGER_UPDATE.name())
-                                .requestMatchers(DELETE, "/api/v1/management/**").hasAnyAuthority(ADMIN_DELETE.name(), MANAGER_DELETE.name())
-                                .anyRequest()
-                                .authenticated()
-
-                )
+                .authorizeHttpRequests(req -> req
+                        .requestMatchers(WHITE_LIST_URL)
+                        .permitAll()
+                        .requestMatchers(USER_LIST_URL).hasAnyRole(ADMIN.name(), MANAGER.name(), USER.name())
+                        .requestMatchers("/api/v1/management/**").hasAnyRole(ADMIN.name(), MANAGER.name())
+                        .requestMatchers(GET, "/api/v1/management/**").hasAnyAuthority(ADMIN_READ.name(), MANAGER_READ.name())
+                        .requestMatchers(GET, "/api/v1/rate/**").hasAnyAuthority(ADMIN_READ.name(), MANAGER_READ.name(), USER.name())
+                        .requestMatchers(POST, "/api/v1/rate/**").hasAnyAuthority(ADMIN_CREATE.name(), MANAGER_CREATE.name())
+                        .requestMatchers(PUT, "/api/v1/management/**").hasAnyAuthority(ADMIN_UPDATE.name(), MANAGER_UPDATE.name())
+                        .requestMatchers(DELETE, "/api/v1/management/**").hasAnyAuthority(ADMIN_DELETE.name(), MANAGER_DELETE.name())
+                        .anyRequest()
+                        .authenticated())
                 .oauth2Login(oauth2 -> oauth2
                         .loginPage("http://127.0.0.1:5501/Saraf-BRK/pages/sign-in.html")
                         .defaultSuccessUrl("http://127.0.0.1:5501/Saraf-BRK/pages/transfer-details.html")
@@ -89,18 +86,18 @@ public class SecurityConfiguration {
                 .sessionManagement(session -> session.sessionCreationPolicy(STATELESS))
                 .authenticationProvider(authenticationProvider)
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
-                .logout(logout ->
-                        logout.logoutUrl("/api/v1/auth/logout")
+                .logout(logout -> logout
+                                .logoutUrl("/api/v1/auth/logout")
                                 .addLogoutHandler(logoutHandler)
-                                .logoutSuccessHandler((request, response, authentication) -> SecurityContextHolder.clearContext())
-                )
+                                .logoutSuccessHandler((request, response, authentication) -> SecurityContextHolder.clearContext()))
                 .exceptionHandling(exception -> exception
                         // Redirect to custom 404 page when resource not found
                         .authenticationEntryPoint((request, response, authException) -> {
                             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
                             response.sendRedirect("http://127.0.0.1:5501/Saraf-BRK/pages/404.html"); // Assuming the 404 page is in the static folder
-                        })
-                );
+                        }))
+                .requiresChannel(channel -> channel
+                        .anyRequest().requiresSecure());
 
         return http.build();
     }

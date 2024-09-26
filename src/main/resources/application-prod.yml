@@ -1,12 +1,12 @@
 spring:
   datasource:
-    url: jdbc:postgresql://${DB_HOST_DEV}:${DB_PORT}/${DB_NAME}
+    url: jdbc:postgresql://${DB_HOST}:${DB_PORT}/${DB_NAME}
     username: ${DB_USER}
-    password: ${DB_PASSWORD_DEV}
+    password: ${DB_PASSWORD}
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: validate
     properties:
       hibernate:
         format_sql: true
@@ -29,6 +29,7 @@ spring:
           timeout: 3000
           writetimeout: 5000
 
+
 application:
   security:
     jwt:
@@ -40,7 +41,25 @@ application:
     frontend:
       activation-url: ${ACTIVATION_URL}
   cors:
-    origins: ${CORS_ORIGINS_DEV}
+    origins: ${CORS_ORIGINS_PROD}
+
+logging:
+  level:
+    root: INFO
+    org.springframework.web: WARN
+  file:
+    name: /var/log/spring-boot-app/app.log
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "health,info"
+  prometheus:
+    metrics:
+      export:
+        enabled: true
+
 
 server:
   port: 8088

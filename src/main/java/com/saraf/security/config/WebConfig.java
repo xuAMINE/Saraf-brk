@@ -13,7 +13,7 @@ import java.util.List;
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
 
-    @Value("application.cors.origins")
+    @Value("${application.cors.origins}")
     private List<String> allowedOrigins;
 
     @Bean
@@ -23,6 +23,7 @@ public class WebConfig implements WebMvcConfigurer {
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH"));
         configuration.setAllowedHeaders(List.of("Authorization", "Content-Type"));
         configuration.setAllowCredentials(true);
+        configuration.setMaxAge(3600L);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
