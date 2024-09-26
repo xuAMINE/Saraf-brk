@@ -22,10 +22,3 @@ spring:
 
 springdoc:
   default-produces-media-type: application/json
-
-server:
-  ssl:
-    key-store: keystore.p12
-    key-store-password: saraf
-    key-store-type: PKCS12
-    key-alias: saraf

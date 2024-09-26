@@ -6,10 +6,10 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
 import org.springframework.security.access.hierarchicalroles.RoleHierarchyAuthoritiesMapper;
 import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl;
 import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -42,6 +42,7 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
 @EnableMethodSecurity
 public class SecurityConfiguration {
 
+    private final Environment env;
     private static final String[] WHITE_LIST_URL = {"/api/v1/auth/**",
             "/api/v1/rate/**",
             "/api/v1/user/**",
@@ -95,11 +96,25 @@ public class SecurityConfiguration {
                         .authenticationEntryPoint((request, response, authException) -> {
                             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
                             response.sendRedirect("http://127.0.0.1:5501/Saraf-BRK/pages/404.html"); // Assuming the 404 page is in the static folder
-                        }))
-                .requiresChannel(channel -> channel
-                        .anyRequest().requiresSecure());
+                        }));
+
+        // Conditionally require HTTPS based on the active profile
+        if (!isTestProfileActive()) {
+            http.requiresChannel(channel -> channel.anyRequest().requiresSecure());
+        }
 
         return http.build();
+    }
+
+    private boolean isTestProfileActive() {
+        boolean isTestProfileActive = false;
+        for (String profile : env.getActiveProfiles()) {
+            if ("test".equals(profile)) {
+                isTestProfileActive = true;
+                break;
+            }
+        }
+        return isTestProfileActive;
     }
 
     @Bean
