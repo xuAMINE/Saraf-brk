@@ -133,7 +133,7 @@ jobs:
 
       - name: SSH into EC2 and Deploy
         run: |
-          ssh -o StrictHostKeyChecking=no -i ~/.ssh/sarafKEY.pem ec2-user@13.57.200.32 << 'EOF'
+          ssh -o StrictHostKeyChecking=no -i ~/.ssh/sarafKEY.pem ec2-user@13.57.42.52 << 'EOF'
           docker pull ${{ secrets.DOCKERHUB_USERNAME }}/srf-api:latest
           docker stop srf-container || true
           docker rm srf-container || true
