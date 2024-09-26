@@ -13,7 +13,7 @@ COPY --from=build /sarafBRK/target/security-*.jar /app/
 EXPOSE 8088
 
 CMD java -jar \
-         -Dspring.profiles.active=dev \
+         -Dspring.profiles.active=prod \
          -Dspring.datasource.url=jdbc:postgresql://34.16.181.252:5432/sarafBRKdb \
          -Dspring.datasource.username=postgres \
          -Dspring.datasource.password=SarafBrkDb24$ \
