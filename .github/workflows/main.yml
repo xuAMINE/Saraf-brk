@@ -41,6 +41,9 @@ jobs:
           java-version: 17
           distribution: 'corretto'
 
+      - name: Print Environment Variables
+        run: env
+
       - name: Running unit Tests
         env:
           SPRING_PROFILES_ACTIVE: test # Set the active profile to 'test'
