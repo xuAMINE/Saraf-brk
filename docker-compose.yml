@@ -7,7 +7,7 @@ services:
     networks:
       - spring-demo
     environment:
-      - ACTIVE_PROFILE=dev   # or prod depending on your use case
+      - ACTIVE_PROFILE=prod   # or prod depending on your use case
       - DB_URL=jdbc:postgresql://34.16.181.252:5432/sarafBRKdb
       - DB_USERNAME=postgres
       - DB_PASSWORD=SarafBrkDb24$
