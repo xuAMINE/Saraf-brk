@@ -3,9 +3,7 @@ package com.saraf.security.config;
 import com.saraf.security.token.TokenRepository;
 import com.saraf.security.user.Role;
 import com.saraf.security.user.UserRepository;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import java.security.Key;
@@ -40,8 +38,12 @@ public class JwtService {
   }
 
   public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
-    final Claims claims = extractAllClaims(token);
-    return claimsResolver.apply(claims);
+    try {
+      final Claims claims = extractAllClaims(token);
+      return claimsResolver.apply(claims);
+    } catch (JwtException e) {  // General JwtException or other subclasses can be used instead of SignatureException
+      throw new IllegalArgumentException("Invalid JWT: " + e.getMessage());
+    }
   }
 
   public String generateToken(UserDetails userDetails) {
