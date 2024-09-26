@@ -41,12 +41,14 @@ jobs:
           java-version: 17
           distribution: 'corretto'
 
-      - name: Print Environment Variables
-        run: env
-
       - name: Running unit Tests
         env:
           SPRING_PROFILES_ACTIVE: test # Set the active profile to 'test'
+          MAIL_USERNAME: ${{ secrets.MAIL_USERNAME }}
+          MAIL_PASSWORD: ${{ secrets.MAIL_PASSWORD }}
+          JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
+          ACTIVATION_URL: ${{ secrets.ACTIVATION_URL }}
+          CORS_ORIGINS_DEV: ${{ secrets.CORS_ORIGINS_DEV }}
         run: mvn clean test
 
   build:
