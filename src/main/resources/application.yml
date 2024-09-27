@@ -10,13 +10,13 @@ spring:
       client:
         registration:
           google:
-            client-id: ${GOOGLE_CLIENT_ID}
-            client-secret: ${GOOGLE_SECRET}
+            client-id: 1037401552789-vn06f7ljj1l57bol582pgpru6gfdi98d.apps.googleusercontent.com
+            client-secret: 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
             scope: profile, email
             redirect-uri: "{baseUrl}/login/oauth2/code/google"
           facebook:
-            client-id: ${FACEBOOK_CLIENT_ID}
-            client-secret: ${FACEBOOK_SECRET}
+            client-id: 695445419432041
+            client-secret: d5e239e538014443166daf00325c96e0
             scope: public_profile, email
             redirect-uri: "{baseUrl}/login/oauth2/code/facebook"
 
