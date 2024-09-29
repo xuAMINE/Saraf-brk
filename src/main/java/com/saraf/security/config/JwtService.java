@@ -1,5 +1,7 @@
 package com.saraf.security.config;
 
+import com.saraf.security.exception.ExpiredTokenException;
+import com.saraf.security.exception.InvalidTokenException;
 import com.saraf.security.token.TokenRepository;
 import com.saraf.security.user.Role;
 import com.saraf.security.user.UserRepository;
@@ -13,6 +15,8 @@ import java.util.Map;
 import java.util.function.Function;
 
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -21,6 +25,8 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class JwtService {
+
+  private static final Logger logger = LoggerFactory.getLogger(JwtService.class);
 
   @Value("${application.security.jwt.secret-key}")
   private String secretKey;
@@ -41,8 +47,21 @@ public class JwtService {
     try {
       final Claims claims = extractAllClaims(token);
       return claimsResolver.apply(claims);
-    } catch (JwtException e) {  // General JwtException or other subclasses can be used instead of SignatureException
-      throw new IllegalArgumentException("Invalid JWT: " + e.getMessage());
+    } catch (ExpiredJwtException e) {
+      logger.error("JWT is expired: {}", e.getMessage());
+      throw new ExpiredTokenException("JWT expired at " + e.getClaims().getExpiration());
+    } catch (UnsupportedJwtException e) {
+      logger.error("Unsupported JWT: {}", e.getMessage());
+      throw new InvalidTokenException("Unsupported JWT");
+    } catch (MalformedJwtException e) {
+      logger.error("Malformed JWT: {}", e.getMessage());
+      throw new InvalidTokenException("Malformed JWT");
+    } catch (IllegalArgumentException e) {
+      logger.error("JWT claims string is empty: {}", e.getMessage());
+      throw new InvalidTokenException("Invalid JWT");
+    } catch (NullPointerException e) {
+      logger.error("JWT claims string is null: {}", e.getMessage());
+      throw new InvalidTokenException("null pointer");
     }
   }
 
@@ -100,16 +119,29 @@ public class JwtService {
   }
 
   private Date extractExpiration(String token) {
-    return extractClaim(token, Claims::getExpiration);
+    try {
+      return extractClaim(token, Claims::getExpiration);
+    } catch (InvalidTokenException e) {
+        logger.error("Invalid token when extracting expiration: {}", e.getMessage());
+        return null;
+    } catch (JwtException e) {
+        logger.error("JWT Exception when extracting expiration: {}", e.getMessage());
+        throw new InvalidTokenException("Failed to extract expiration due to invalid token", e);
+    }
   }
 
   private Claims extractAllClaims(String token) {
-    return Jwts
-        .parserBuilder()
-        .setSigningKey(getSignInKey())
-        .build()
-        .parseClaimsJws(token)
-        .getBody();
+    try {
+      return Jwts
+              .parserBuilder()
+              .setSigningKey(getSignInKey())
+              .build()
+              .parseClaimsJws(token)
+              .getBody();
+    } catch (JwtException e) {
+      logger.error("Failed to extract claims: {}", e.getMessage());
+      return null;
+    }
   }
 
   private Key getSignInKey() {

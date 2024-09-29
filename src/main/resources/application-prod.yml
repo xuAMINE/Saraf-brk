@@ -39,7 +39,7 @@ application:
         expiration: 604800000 # 7 days
   mailing:
     frontend:
-      activation-url: ${ACTIVATION_URL}
+      activation-url: ${ACTIVATION_URL_PROD}
   cors:
     origins: ${CORS_ORIGINS_PROD}
 
@@ -67,3 +67,6 @@ server:
     key-store-type: PKCS12
     key-alias: saraf
   port: 8088
+  address: 0.0.0.0
+
+

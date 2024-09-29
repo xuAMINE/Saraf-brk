@@ -64,7 +64,7 @@ public class UserService {
 
         resetTokenRepository.save(resetToken);
 
-        String resetLink = "http://127.0.0.1:5501/Saraf-BRK/pages/reset-password.html?token=" + token;
+        String resetLink = "https://sarafbrk.com/reset-password/?token=" + token;
         emailService.sendEmail(
                 user.getEmail(),
                 user.getFullName(),

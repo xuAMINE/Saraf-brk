@@ -41,9 +41,9 @@ public class AuthenticationController {
     AuthenticationResponse response = service.authenticate(request);
 
     if (response.getMessage() != null && response.getMessage().equals("Email not verified")) {
-      return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     } else if (response.getMessage() != null && response.getMessage().equals("Invalid credentials")) {
-      return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
 
     return ResponseEntity.ok(response);
@@ -60,7 +60,7 @@ public class AuthenticationController {
       boolean isActivated = service.activateAccount(verToken);
       if (isActivated) {
         return ResponseEntity.status(HttpStatus.FOUND)
-                .location(URI.create("http://127.0.0.1:5501/Saraf-BRK/pages/account-activated.html"))
+                .location(URI.create("https://sarafbrk.com/account-activated/"))
                 .build();
       } else
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
