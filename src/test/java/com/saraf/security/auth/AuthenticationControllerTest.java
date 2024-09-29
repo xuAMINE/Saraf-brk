@@ -47,7 +47,7 @@ public class AuthenticationControllerTest {
         mockMvc.perform(get("/api/v1/auth/activate-account")
                         .param("verToken", token))
                 .andExpect(status().isFound())
-                .andExpect(redirectedUrl("http://127.0.0.1:5501/Saraf-BRK/pages/account-activated.html"));
+                .andExpect(redirectedUrl("https://sarafbrk.com/account-activated/"));
     }
 
     @Test
