@@ -10,6 +10,8 @@ WORKDIR /app
 
 COPY --from=build /sarafBRK/target/security-*.jar /app/
 COPY keystore.p12 /app/keystore.p12
+COPY private.key.pem /app/ssl/private.key.pem
+COPY domain.cert.pem /app/ssl/domain.cert.pem
 
 EXPOSE 8088
 
