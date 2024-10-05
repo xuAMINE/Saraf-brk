@@ -5,16 +5,19 @@ RUN mvn dependency:go-offline
 COPY src ./src
 RUN mvn clean package -DskipTests
 
-
-
 FROM amazoncorretto:17
 WORKDIR /app
+
 COPY --from=build /sarafBRK/target/security-*.jar /app/
+COPY keystore.p12 /app/keystore.p12
+COPY private.key.pem /app/ssl/private.key.pem
+COPY domain.cert.pem /app/ssl/domain.cert.pem
+
 EXPOSE 8088
 
 CMD java -jar \
-         -Dspring.profiles.active=${ACTIVE_PROFILE} \
-         -Dspring.datasource.url=${DB_URL} \
-         -Dspring.datasource.username=${DB_USERNAME} \
-         -Dspring.datasource.password=${DB_PASSWORD} \
-         security-${APP_VERSION}.jar
+         -Dspring.profiles.active=prod \
+         -Dspring.datasource.url=jdbc:postgresql://34.16.181.252:5432/sarafBRKdb \
+         -Dspring.datasource.username=postgres \
+         -Dspring.datasource.password=SarafBrkDb24$ \
+         security-1.0.2.jar

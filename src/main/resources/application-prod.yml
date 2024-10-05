@@ -1,12 +1,12 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/jwt_security
-    username: postgres
-    password: postgres1
+    url: jdbc:postgresql://${DB_HOST}:${DB_PORT}/${DB_NAME}
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: update
     properties:
       hibernate:
         format_sql: true
@@ -29,6 +29,7 @@ spring:
           timeout: 3000
           writetimeout: 5000
 
+
 application:
   security:
     jwt:
@@ -38,9 +39,34 @@ application:
         expiration: 604800000 # 7 days
   mailing:
     frontend:
-      activation-url: ${ACTIVATION_URL}
+      activation-url: ${ACTIVATION_URL_PROD}
   cors:
-    origins: ${CORS_ORIGINS_DEV}
+    origins: ${CORS_ORIGINS_PROD}
+
+logging:
+  level:
+    root: INFO
+    org.springframework.web: WARN
+  file:
+    name: /var/log/spring-boot-app/app.log
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "health,info"
+  prometheus:
+    metrics:
+      export:
+        enabled: true
 
 server:
+  ssl:
+    key-store: keystore.p12
+    key-store-password: saraf
+    key-store-type: PKCS12
+    key-alias: saraf
   port: 8088
+  address: 0.0.0.0
+
+

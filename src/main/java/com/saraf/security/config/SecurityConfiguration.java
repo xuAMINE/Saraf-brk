@@ -6,10 +6,10 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
 import org.springframework.security.access.hierarchicalroles.RoleHierarchyAuthoritiesMapper;
 import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl;
 import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -42,6 +42,7 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
 @EnableMethodSecurity
 public class SecurityConfiguration {
 
+    private final Environment env;
     private static final String[] WHITE_LIST_URL = {"/api/v1/auth/**",
             "/api/v1/rate/**",
             "/api/v1/user/**",
@@ -65,21 +66,18 @@ public class SecurityConfiguration {
         http
                 .cors(withDefaults())
                 .csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(req ->
-                        req
-                                .requestMatchers(WHITE_LIST_URL)
-                                .permitAll()
-                                .requestMatchers(USER_LIST_URL).hasAnyRole(ADMIN.name(), MANAGER.name(), USER.name())
-                                .requestMatchers("/api/v1/management/**").hasAnyRole(ADMIN.name(), MANAGER.name())
-                                .requestMatchers(GET, "/api/v1/management/**").hasAnyAuthority(ADMIN_READ.name(), MANAGER_READ.name())
-                                .requestMatchers(GET, "/api/v1/rate/**").hasAnyAuthority(ADMIN_READ.name(), MANAGER_READ.name(), USER.name())
-                                .requestMatchers(POST, "/api/v1/rate/**").hasAnyAuthority(ADMIN_CREATE.name(), MANAGER_CREATE.name())
-                                .requestMatchers(PUT, "/api/v1/management/**").hasAnyAuthority(ADMIN_UPDATE.name(), MANAGER_UPDATE.name())
-                                .requestMatchers(DELETE, "/api/v1/management/**").hasAnyAuthority(ADMIN_DELETE.name(), MANAGER_DELETE.name())
-                                .anyRequest()
-                                .authenticated()
-
-                )
+                .authorizeHttpRequests(req -> req
+                        .requestMatchers(WHITE_LIST_URL)
+                        .permitAll()
+                        .requestMatchers(USER_LIST_URL).hasAnyRole(ADMIN.name(), MANAGER.name(), USER.name())
+                        .requestMatchers("/api/v1/management/**").hasAnyRole(ADMIN.name(), MANAGER.name())
+                        .requestMatchers(GET, "/api/v1/management/**").hasAnyAuthority(ADMIN_READ.name(), MANAGER_READ.name())
+                        .requestMatchers(GET, "/api/v1/rate/**").hasAnyAuthority(ADMIN_READ.name(), MANAGER_READ.name(), USER.name())
+                        .requestMatchers(POST, "/api/v1/rate/**").hasAnyAuthority(ADMIN_CREATE.name(), MANAGER_CREATE.name())
+                        .requestMatchers(PUT, "/api/v1/management/**").hasAnyAuthority(ADMIN_UPDATE.name(), MANAGER_UPDATE.name())
+                        .requestMatchers(DELETE, "/api/v1/management/**").hasAnyAuthority(ADMIN_DELETE.name(), MANAGER_DELETE.name())
+                        .anyRequest()
+                        .authenticated())
                 .oauth2Login(oauth2 -> oauth2
                         .loginPage("http://127.0.0.1:5501/Saraf-BRK/pages/sign-in.html")
                         .defaultSuccessUrl("http://127.0.0.1:5501/Saraf-BRK/pages/transfer-details.html")
@@ -89,20 +87,34 @@ public class SecurityConfiguration {
                 .sessionManagement(session -> session.sessionCreationPolicy(STATELESS))
                 .authenticationProvider(authenticationProvider)
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
-                .logout(logout ->
-                        logout.logoutUrl("/api/v1/auth/logout")
+                .logout(logout -> logout
+                                .logoutUrl("/api/v1/auth/logout")
                                 .addLogoutHandler(logoutHandler)
-                                .logoutSuccessHandler((request, response, authentication) -> SecurityContextHolder.clearContext())
-                )
+                                .logoutSuccessHandler((request, response, authentication) -> SecurityContextHolder.clearContext()))
                 .exceptionHandling(exception -> exception
                         // Redirect to custom 404 page when resource not found
                         .authenticationEntryPoint((request, response, authException) -> {
                             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
                             response.sendRedirect("http://127.0.0.1:5501/Saraf-BRK/pages/404.html"); // Assuming the 404 page is in the static folder
-                        })
-                );
+                        }));
+
+        // Conditionally require HTTPS based on the active profile
+        if (isProdProfileActive()) {
+            http.requiresChannel(channel -> channel.anyRequest().requiresSecure());
+        }
 
         return http.build();
+    }
+
+    private boolean isProdProfileActive() {
+        boolean isTestProfileActive = false;
+        for (String profile : env.getActiveProfiles()) {
+            if ("prod".equals(profile)) {
+                isTestProfileActive = true;
+                break;
+            }
+        }
+        return isTestProfileActive;
     }
 
     @Bean

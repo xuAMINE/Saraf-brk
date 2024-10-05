@@ -1,5 +1,6 @@
 package com.saraf.security.config;
 
+import com.saraf.security.exception.InvalidTokenException;
 import com.saraf.security.token.TokenRepository;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
@@ -10,6 +11,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -23,6 +26,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 @Component
 @RequiredArgsConstructor
 public class  JwtAuthenticationFilter extends OncePerRequestFilter {
+  private static final Logger logger = LoggerFactory.getLogger(JwtService.class);
 
   private final JwtService jwtService;
   private final UserDetailsService userDetailsService;
@@ -75,8 +79,15 @@ public class  JwtAuthenticationFilter extends OncePerRequestFilter {
       response.getWriter().write("{\"message\": \"JWT expired at " + ex.getClaims().getExpiration() +
               ". Current time: " + new java.util.Date() + "\"}"); // Detailed JSON response
       response.getWriter().flush(); // Ensure response is sent immediately
+    } catch (InvalidTokenException ex) {
+      logger.error("Authentication error: {}", ex.getMessage());
+      response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+      response.setContentType("application/json");
+      response.getWriter().write("{\"message\": \"Internal server error\"}");
+      response.getWriter().flush();
+    } catch (Exception ex) {
+      logger.error("error: {}", ex.getMessage());
     }
-
   }
 
 }

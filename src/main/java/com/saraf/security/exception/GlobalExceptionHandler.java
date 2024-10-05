@@ -144,4 +144,10 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ErrResponse);
     }
 
+    @ExceptionHandler(InvalidTokenException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public ResponseEntity<String> handleInvalidTokenException(InvalidTokenException e) {
+        return new ResponseEntity<>("Invalid Token: " + e.getMessage(), HttpStatus.UNAUTHORIZED);
+    }
+
 }
