@@ -81,9 +81,9 @@ public class  JwtAuthenticationFilter extends OncePerRequestFilter {
       response.getWriter().flush(); // Ensure response is sent immediately
     } catch (InvalidTokenException ex) {
       logger.error("Authentication error: {}", ex.getMessage());
-      response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+      response.setStatus(HttpStatus.UNAUTHORIZED.value());
       response.setContentType("application/json");
-      response.getWriter().write("{\"message\": \"Internal server error\"}");
+      response.getWriter().write("{\"message\": \"Invalid Token\"}");
       response.getWriter().flush();
     } catch (Exception ex) {
       logger.error("error: {}", ex.getMessage());

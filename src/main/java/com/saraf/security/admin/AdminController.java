@@ -40,7 +40,7 @@ public class AdminController {
     }
 
     @PostMapping("/upload-receipt/{id}")
-    public ResponseEntity<?> uploadReceipt(@PathVariable Integer id, @RequestParam("receipt") MultipartFile receipt) {
+    public ResponseEntity<ApiResponse> uploadReceipt(@PathVariable Integer id, @RequestParam("receipt") MultipartFile receipt) {
         try {
             Transfer transfer = s3Service.saveReceipt(id, receipt);
             return ResponseEntity.ok().body(new ApiResponse(true, "Receipt uploaded successfully", transfer.getReceipt()));
