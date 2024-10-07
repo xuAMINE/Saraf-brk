@@ -19,6 +19,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.io.UnsupportedEncodingException;
 import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.Collections;
@@ -99,7 +100,7 @@ class UserServiceTest {
     }
 
     @Test
-    void testForgotPassword_Success() throws MessagingException, MessagingException {
+    void testForgotPassword_Success() throws MessagingException, MessagingException, UnsupportedEncodingException {
         ForgotPasswordRequest request = new ForgotPasswordRequest("johndoe@example.com");
         when(userRepository.findByEmail("johndoe@example.com")).thenReturn(Optional.of(testUser));
 

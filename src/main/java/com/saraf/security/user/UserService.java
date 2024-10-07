@@ -12,6 +12,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.io.UnsupportedEncodingException;
 import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -52,7 +53,7 @@ public class UserService {
         repository.save(user);
     }
 
-    public void forgotPassword (ForgotPasswordRequest request) throws MessagingException {
+    public void forgotPassword (ForgotPasswordRequest request) throws MessagingException, UnsupportedEncodingException {
         var user = repository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new IllegalStateException("User not found"));
 

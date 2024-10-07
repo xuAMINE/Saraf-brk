@@ -19,6 +19,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -58,7 +59,7 @@ public class AuthenticationServiceTest {
     }
 
     @Test
-    public void testRegisterUser() throws MessagingException {
+    public void testRegisterUser() throws MessagingException, UnsupportedEncodingException {
         RegisterRequest request = new RegisterRequest();
         request.setFirstname("John");
         request.setLastname("Doe");
@@ -128,7 +129,7 @@ public class AuthenticationServiceTest {
 
 
     @Test
-    public void testResendEmailVerification() throws MessagingException {
+    public void testResendEmailVerification() throws MessagingException, UnsupportedEncodingException {
         User user = User.builder().email("test@test.com").enabled(false).build();
 
         when(userRepository.findByEmail("test@test.com")).thenReturn(Optional.of(user));

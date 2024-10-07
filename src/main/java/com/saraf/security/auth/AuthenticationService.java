@@ -25,6 +25,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.security.Principal;
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
@@ -45,7 +46,7 @@ public class AuthenticationService {
   @Value("${application.mailing.frontend.activation-url}")
   private String activationUrl;
 
-  public AuthenticationResponse register(RegisterRequest request) throws MessagingException {
+  public AuthenticationResponse register(RegisterRequest request) throws MessagingException, UnsupportedEncodingException {
     var user = User.builder()
         .firstname(request.getFirstname())
         .lastname(request.getLastname())
@@ -141,7 +142,7 @@ public class AuthenticationService {
     tokenRepository.save(token);
   }
 
-  private void sendValidationEmail(User user) throws MessagingException {
+  private void sendValidationEmail(User user) throws MessagingException, UnsupportedEncodingException {
     var newToken = generateAndSaveActivationToken(user);
 
     emailService.sendEmail(
@@ -154,7 +155,7 @@ public class AuthenticationService {
     );
   }
 
-  public void resendEmailVerification(String email) throws MessagingException {
+  public void resendEmailVerification(String email) throws MessagingException, UnsupportedEncodingException {
     var user = repository.findByEmail(email)
             .orElseThrow(() -> new UsernameNotFoundException(email));
 

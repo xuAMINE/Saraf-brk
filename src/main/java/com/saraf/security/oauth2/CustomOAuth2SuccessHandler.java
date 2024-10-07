@@ -39,7 +39,7 @@ public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler 
 
         // Construct the redirect URL with both tokens
         String redirectUrl = String.format(
-                "http://127.0.0.1:5501/src/recipient/?token=%s&refreshToken=%s",
+                "https://sarafbrk.com/recipient/?token=%s&refreshToken=%s",
                 jwtToken, refreshToken
         );
 

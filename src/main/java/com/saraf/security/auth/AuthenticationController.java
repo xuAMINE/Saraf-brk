@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
 
 @RestController
@@ -30,7 +31,7 @@ public class AuthenticationController {
       if (service.userExists(request.getEmail())) {
         return ResponseEntity.status(HttpStatus.CONFLICT).body("Email already exists");
       }
-      return ResponseEntity.ok(service.register(request));
+      return ResponseEntity.status(HttpStatus.CREATED).body(service.register(request));
     } catch (Exception e) {
       return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred");
     }
@@ -74,7 +75,7 @@ public class AuthenticationController {
   }
 
   @PostMapping("/resend-verification")
-  public ResponseEntity<?> resendVerification(@RequestBody ResendVerificationRequest request) throws MessagingException {
+  public ResponseEntity<?> resendVerification(@RequestBody ResendVerificationRequest request) throws MessagingException, UnsupportedEncodingException {
     service.resendEmailVerification(request.getEmail());
     return ResponseEntity.ok("Verification email resent successfully.");
   }

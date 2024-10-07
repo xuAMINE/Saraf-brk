@@ -79,8 +79,8 @@ public class SecurityConfiguration {
                         .anyRequest()
                         .authenticated())
                 .oauth2Login(oauth2 -> oauth2
-                        .loginPage("http://127.0.0.1:5501/Saraf-BRK/pages/sign-in.html")
-                        .defaultSuccessUrl("http://127.0.0.1:5501/Saraf-BRK/pages/transfer-details.html")
+                        .loginPage("https://sarafbrk.com/login/")
+                        .defaultSuccessUrl("https://sarafbrk.com/transfer/")
                         .userInfoEndpoint(userInfo -> userInfo
                             .userService(customOAuth2UserService))
                         .successHandler(customOAuth2SuccessHandler))
@@ -95,7 +95,7 @@ public class SecurityConfiguration {
                         // Redirect to custom 404 page when resource not found
                         .authenticationEntryPoint((request, response, authException) -> {
                             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-                            response.sendRedirect("http://127.0.0.1:5501/Saraf-BRK/pages/404.html"); // Assuming the 404 page is in the static folder
+                            response.sendRedirect("https://sarafbrk.com/404/"); // Assuming the 404 page is in the static folder
                         }));
 
         // Conditionally require HTTPS based on the active profile

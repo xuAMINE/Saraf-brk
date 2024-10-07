@@ -83,7 +83,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                 .firstname(firstName)
                 .lastname(lastName)
                 .email(email)
-                .password(passwordEncoder.encode("oauth2user")) // Placeholder password
+                .password(passwordEncoder.encode("oauth2user24$")) // Placeholder password
                 .enabled(true)
                 .role(Role.USER)
                 .build();

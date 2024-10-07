@@ -11,6 +11,7 @@ import org.springframework.ui.freemarker.SpringTemplateLoader;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring6.SpringTemplateEngine;
 
+import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
@@ -33,7 +34,7 @@ public class EmailService {
             String confirmationUrl,
             String activationCode,
             String subject
-    ) throws MessagingException {
+    ) throws MessagingException, UnsupportedEncodingException {
         String templateName;
         if (emailTemplateName == null) {
             templateName = "confirm-email";
@@ -51,7 +52,7 @@ public class EmailService {
         Context context = new Context();
         context.setVariables(properties);
 
-        mimeMessageHelper.setFrom("amine@sarafbrk.com");
+        mimeMessageHelper.setFrom("amine@sarafbrk.com", "SARAF");
         mimeMessageHelper.setTo(to);
         mimeMessageHelper.setSubject(subject);
 
@@ -63,11 +64,11 @@ public class EmailService {
 
     }
 
-    public void sendContactUsEmail(String name, String email, String message) throws MessagingException {
+    public void sendContactUsEmail(String name, String email, String message) throws MessagingException, UnsupportedEncodingException {
         MimeMessage mimeMessage = mailSender.createMimeMessage();
         MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, MULTIPART_MODE_MIXED, UTF_8.name());
 
-        mimeMessageHelper.setFrom("amine@sarafbrk.com");
+        mimeMessageHelper.setFrom("amine@sarafbrk.com", "SARAF");
         mimeMessageHelper.setTo("contact@sarafbrk.com");
         mimeMessageHelper.setSubject("Contact Us Message");
         mimeMessageHelper.setText("You have received a new message from: \n\n" +
@@ -78,7 +79,7 @@ public class EmailService {
         mailSender.send(mimeMessage);
     }
 
-    public void sendContactConfirmEmail(String name, String email, String message) throws MessagingException {
+    public void sendContactConfirmEmail(String name, String email, String message) throws MessagingException, UnsupportedEncodingException {
         MimeMessage mimeMessage = mailSender.createMimeMessage();
         MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, MULTIPART_MODE_MIXED, UTF_8.name());
         Map<String, Object> properties = new HashMap<>();
@@ -88,7 +89,7 @@ public class EmailService {
         Context context = new Context();
         context.setVariables(properties);
 
-        mimeMessageHelper.setFrom("amine@sarafbrk.com");
+        mimeMessageHelper.setFrom("amine@sarafbrk.com", "SARAF");
         mimeMessageHelper.setTo(email);
         mimeMessageHelper.setSubject("Thank you for contacting us!");
 

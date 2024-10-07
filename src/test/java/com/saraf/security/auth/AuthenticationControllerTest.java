@@ -106,7 +106,7 @@ public class AuthenticationControllerTest {
         mockMvc.perform(post("/api/v1/auth/register")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"firstname\":\"Amine\",\"lastname\":\"Zirek\", \"email\":\"aminezirek@test.com\", \"password\":\"password_test\"}"))
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.access_token").value("testToken"));
     }
 
