@@ -31,8 +31,6 @@ spring:
           timeout: 3000
           writetimeout: 5000
 
-
-
 application:
   security:
     jwt:
@@ -45,6 +43,17 @@ application:
       activation-url: ${ACTIVATION_URL}
   cors:
     origins: ${CORS_ORIGINS_DEV}
+
+logging:
+  level:
+    root: INFO
+    org.springframework.web: WARN
+    org:
+      springframework:
+        security: DEBUG
+        web: DEBUG
+  file:
+    name: /var/log/spring-boot-app/app.log
 
 server:
   port: 8088

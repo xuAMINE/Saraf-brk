@@ -15,10 +15,10 @@ spring:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
 
   mail:
-    host: smtp.gmail.com
-    port: 587
-    username: ${MAIL_USERNAME}
-    password: ${MAIL_PASSWORD}
+    host: smtp.porkbun.com
+    port: 50587
+    username: ${MAIL_USERNAME_S}
+    password: ${MAIL_PASSWORD_s}
     properties:
       mail:
         smtp:
@@ -54,6 +54,10 @@ logging:
   level:
     root: INFO
     org.springframework.web: WARN
+    org:
+      springframework:
+        security: DEBUG
+        web: DEBUG
   file:
     name: /var/log/spring-boot-app/app.log
 
