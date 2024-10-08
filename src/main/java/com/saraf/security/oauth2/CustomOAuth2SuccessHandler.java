@@ -20,8 +20,6 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler {
 
-    @Value("${application.oauth.redirectURL}")
-    private String redirectURL;
     private final UserRepository userRepository;
     private final JwtService jwtService;
 
