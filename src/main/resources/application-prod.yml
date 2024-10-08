@@ -59,12 +59,10 @@ application:
       expiration: 1200000 # 20 minute 1200000
       refresh-token:
         expiration: 604800000 # 7 days
-
   oauth:
     login: https://sarafbrk.com/login/
     success: https://sarafbrk.com/transfer/
     redirectURL: https://sarafbrk.com/recipient/?token=%s&refreshToken=%s
-
   mailing:
     frontend:
       activation-url: ${ACTIVATION_URL_PROD}
