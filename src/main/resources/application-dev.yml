@@ -14,6 +14,21 @@ spring:
     database: postgresql
     database-platform: org.hibernate.dialect.PostgreSQLDialect
 
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${GOOGLE_CLIENT_ID}
+            client-secret: ${GOOGLE_SECRET}
+            scope: profile, email
+            redirect-uri: "{baseUrl}/login/oauth2/code/google"
+          facebook:
+            client-id: ${FACEBOOK_CLIENT_ID}
+            client-secret: ${FACEBOOK_SECRET}
+            scope: public_profile, email
+            redirect-uri: "{baseUrl}/login/oauth2/code/facebook"
+
   mail:
     host: smtp.porkbun.com
     port: 50587
@@ -38,6 +53,10 @@ application:
       expiration: 1200000 # 20 minute 1200000
       refresh-token:
         expiration: 604800000 # 7 days
+  oauth:
+    login: http://127.0.0.1:5501/src/login/
+    success: http://127.0.0.1:5501/src/transfer/
+    redirectURL: http://127.0.0.1:5501/src/recipient/?token=%s&refreshToken=%s
   mailing:
     frontend:
       activation-url: ${ACTIVATION_URL}

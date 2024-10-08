@@ -5,20 +5,5 @@ spring:
     multipart:
       max-file-size: 50MB
 
-  security:
-    oauth2:
-      client:
-        registration:
-          google:
-            client-id: ${GOOGLE_CLIENT_ID}
-            client-secret: ${GOOGLE_SECRET}
-            scope: profile, email
-            redirect-uri: "https://sarafbrk.com/callback"
-          facebook:
-            client-id: ${FACEBOOK_CLIENT_ID}
-            client-secret: ${FACEBOOK_SECRET}
-            scope: public_profile, email
-            redirect-uri: "https://sarafbrk.com/recipient/"
-
 springdoc:
   default-produces-media-type: application/json

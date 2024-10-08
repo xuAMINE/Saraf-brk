@@ -8,6 +8,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
@@ -19,13 +20,15 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler {
 
+    @Value("${application.oauth.redirectURL}")
+    private String redirectURL;
     private final UserRepository userRepository;
     private final JwtService jwtService;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request,
                                         HttpServletResponse response,
-                                        Authentication authentication) throws IOException, ServletException {
+                                        Authentication authentication) throws IOException {
         OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
         String email = oAuth2User.getAttribute("email");
 
@@ -39,7 +42,7 @@ public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler 
 
         // Construct the redirect URL with both tokens
         String redirectUrl = String.format(
-                "https://sarafbrk.com/recipient/?token=%s&refreshToken=%s",
+                redirectURL,
                 jwtToken, refreshToken
         );
 

@@ -4,6 +4,7 @@ import com.saraf.security.oauth2.CustomOAuth2SuccessHandler;
 import com.saraf.security.oauth2.CustomOAuth2UserService;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
@@ -14,6 +15,7 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.authority.mapping.GrantedAuthoritiesMapper;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -34,13 +36,17 @@ import static org.springframework.http.HttpMethod.GET;
 import static org.springframework.http.HttpMethod.POST;
 import static org.springframework.http.HttpMethod.PUT;
 import static org.springframework.security.config.Customizer.withDefaults;
-import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
 @EnableMethodSecurity
 public class SecurityConfiguration {
+
+    @Value("${application.oauth.login}")
+    private String loginPage;
+    @Value("${application.oauth.success}")
+    private String successPage;
 
     private final Environment env;
     private static final String[] WHITE_LIST_URL = {"/api/v1/auth/**",
@@ -79,12 +85,12 @@ public class SecurityConfiguration {
                         .anyRequest()
                         .authenticated())
                 .oauth2Login(oauth2 -> oauth2
-                        .loginPage("https://sarafbrk.com/login/")
-                        .defaultSuccessUrl("https://sarafbrk.com/transfer/")
+                        .loginPage(loginPage)
+                        .defaultSuccessUrl(successPage)
                         .userInfoEndpoint(userInfo -> userInfo
                             .userService(customOAuth2UserService))
                         .successHandler(customOAuth2SuccessHandler))
-                .sessionManagement(session -> session.sessionCreationPolicy(STATELESS))
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
                 .authenticationProvider(authenticationProvider)
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
                 .logout(logout -> logout
