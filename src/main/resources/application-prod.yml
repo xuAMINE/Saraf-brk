@@ -60,8 +60,6 @@ application:
       refresh-token:
         expiration: 604800000 # 7 days
   oauth:
-    login: https://sarafbrk.com/login/
-    success: https://sarafbrk.com/transfer/
     redirectURL: https://sarafbrk.com/recipient/?token=%s&refreshToken=%s
   mailing:
     frontend:

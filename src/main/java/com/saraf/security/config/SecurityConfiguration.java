@@ -43,11 +43,6 @@ import static org.springframework.security.config.Customizer.withDefaults;
 @EnableMethodSecurity
 public class SecurityConfiguration {
 
-    @Value("${application.oauth.login}")
-    private String loginPage;
-    @Value("${application.oauth.success}")
-    private String successPage;
-
     private final Environment env;
     private static final String[] WHITE_LIST_URL = {"/api/v1/auth/**",
             "/api/v1/rate/**",
@@ -85,8 +80,8 @@ public class SecurityConfiguration {
                         .anyRequest()
                         .authenticated())
                 .oauth2Login(oauth2 -> oauth2
-                        .loginPage(loginPage)
-                        .defaultSuccessUrl(successPage)
+                        .loginPage("/login")
+                        .defaultSuccessUrl("/transfer")
                         .userInfoEndpoint(userInfo -> userInfo
                             .userService(customOAuth2UserService))
                         .successHandler(customOAuth2SuccessHandler))
