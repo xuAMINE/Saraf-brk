@@ -139,3 +139,4 @@ jobs:
           docker rm srf-container || true
           docker run --env-file ~/.env -d --name srf-container -p 8088:8088 ${{ secrets.DOCKERHUB_USERNAME }}/srf-api:latest
           EOF
+          

@@ -32,8 +32,8 @@ spring:
   mail:
     host: smtp.porkbun.com
     port: 50587
-    username: ${MAIL_USERNAME_S}
-    password: ${MAIL_PASSWORD_s}
+    username: amine@sarafbrk.com
+    password: SarafBrkAmine24$
     properties:
       mail:
         smtp:
