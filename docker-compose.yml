@@ -6,16 +6,6 @@ services:
       - 8088:8088
     networks:
       - spring-demo
-    environment:
-      - ACTIVE_PROFILE=prod   # or prod depending on your use case
-      - DB_URL=jdbc:postgresql://34.16.181.252:5432/sarafBRKdb
-      - DB_USERNAME=postgres
-      - DB_PASSWORD=SarafBrkDb24$
-      - APP_VERSION=1.0.1
-      - EMAIL_HOSTNAME=smtp.gmail.com
-      - EMAIL_USER_NAME=sarafbrk@gmail.com
-      - EMAIL_USER_PASSWORD=ftrs nzhz bpnt vftp
-      - JWT_SECRET_KEY=404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970
     restart: unless-stopped
 
 networks:

@@ -32,3 +32,10 @@ build/
 ### VS Code ###
 .vscode/
 src/main/resources/secrets.env
+
+sarafKEY.pem
+public.key.pem
+private.key.pem
+keystore.p12
+domain.cert.pem
+21
