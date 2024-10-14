@@ -41,11 +41,15 @@
    ```bash
    npm start
    ```
-4. Access the app at `http://localhost:3000`.
+4. Access the app at `http://localhost:8088`.
 
 ## Screenshots
 
-_Leave a space here to include screenshots of your app interface._
+Here are some screenshots of the Saraf BRK app in action:
+
+### Homepage
+![Homepage Screenshot](/screenshots/screenshot%20template.jpg) 
+
 
 ## Usage
 
