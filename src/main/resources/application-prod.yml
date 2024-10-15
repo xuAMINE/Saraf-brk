@@ -6,7 +6,7 @@ spring:
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
     properties:
       hibernate:
         format_sql: true
@@ -22,12 +22,12 @@ spring:
             client-id: 603364375521-ht159trgevgficpqua2a6jmqmfktq50f.apps.googleusercontent.com
             client-secret: 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
             scope: profile, email
-            redirect-uri: "https://sarafbrk.com/login/oauth2/code/google"
+            redirect-uri: "{baseUrl}/login/oauth2/code/google"
           facebook:
             client-id: 1055232082490271
             client-secret: 2efda36eb8cfd084ac3f59d5de367de8
             scope: public_profile, email
-            redirect-uri: "https://sarafbrk.com/login/oauth2/code/facebook"
+            redirect-uri: "{baseUrl}/login/oauth2/code/facebook"
 
   mail:
     host: smtp.porkbun.com
@@ -44,13 +44,11 @@ spring:
           timeout: 3000
           writetimeout: 5000
 
-  servlet:
-    multipart:
-      enabled: true
-      max-file-size: 10MB
-      max-request-size: 10MB
-
-
+#  servlet:
+#    multipart:
+#      enabled: true
+#      max-file-size: 10MB
+#      max-request-size: 10MB
 
 application:
   security:
@@ -87,12 +85,12 @@ management:
         enabled: true
 
 server:
-  ssl:
-    key-store: keystore.p12
-    key-store-password: saraf
-    key-store-type: PKCS12
-    key-alias: saraf
+#  ssl:
+#    key-store: keystore.p12
+#    key-store-password: saraf
+#    key-store-type: PKCS12
+#    key-alias: saraf
   port: 8088
-  address: 0.0.0.0
+#  address: 0.0.0.0
 
 

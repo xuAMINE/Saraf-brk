@@ -53,10 +53,6 @@ application:
       expiration: 1200000 # 20 minute 1200000
       refresh-token:
         expiration: 604800000 # 7 days
-  oauth:
-    login: http://127.0.0.1:5501/src/login/
-    success: http://127.0.0.1:5501/src/transfer/
-    redirectURL: http://127.0.0.1:5501/src/recipient/?token=%s&refreshToken=%s
   mailing:
     frontend:
       activation-url: ${ACTIVATION_URL}
