@@ -85,11 +85,11 @@ management:
         enabled: true
 
 server:
-#  ssl:
-#    key-store: keystore.p12
-#    key-store-password: saraf
-#    key-store-type: PKCS12
-#    key-alias: saraf
+  ssl:
+    key-store: keystore.p12
+    key-store-password: saraf
+    key-store-type: PKCS12
+    key-alias: saraf
   port: 8088
 #  address: 0.0.0.0
 
