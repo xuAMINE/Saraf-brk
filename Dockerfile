@@ -9,13 +9,14 @@ FROM amazoncorretto:17
 WORKDIR /app
 
 COPY --from=build /sarafBRK/target/security-*.jar /app/
-COPY keystore.p12 /app/keystore.p12
 
+ARG KEYSTORE_P12_BASE64
 ARG PRIVATE_KEY_PEM
 ARG DOMAIN_CERT_PEM
 ARG PROFILE
 ARG APP_VERSION
 
+RUN echo ${KEYSTORE_P12_BASE64} | base64 -d > /app/keystore.p12
 RUN echo ${PRIVATE_KEY_PEM} > /app/ssl/private.key.pem
 RUN echo ${DOMAIN_CERT_PEM} > /app/ssl/domain.cert.pem
 
