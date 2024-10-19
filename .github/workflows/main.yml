@@ -72,10 +72,10 @@ jobs:
           DB_HOST: ${{ secrets.DB_HOST }}
           DB_PORT: ${{ secrets.DB_PORT }}
           DB_NAME: ${{ secrets.DB_NAME }}
-          DB_USER: ${{ secrets.DB_USERNAME }}
+          DB_USER: ${{ secrets.DB_USER }}
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-          MAIL_USERNAME: ${{ secrets.MAIL_USERNAME }}
-          MAIL_PASSWORD: ${{ secrets.MAIL_PASSWORD }}
+          MAIL_USERNAME: ${{ secrets.MAIL_USERNAME_PROD }}
+          MAIL_PASSWORD: ${{ secrets.MAIL_PASSWORD_PROD }}
           CORS_ORIGINS_PROD: ${{ secrets.CORS_ORIGINS_PROD }}
           JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
           ACTIVATION_URL: ${{ secrets.ACTIVATION_URL }}

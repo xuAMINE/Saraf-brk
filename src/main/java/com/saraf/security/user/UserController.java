@@ -57,5 +57,10 @@ public class UserController {
         return ResponseEntity.ok(service.hasPhoneNumber(connectedUser));
     }
 
+    @GetMapping("/name")
+    public ResponseEntity<String> getUserName(Principal connectedUser) {
+        return ResponseEntity.ok(service.getName(connectedUser));
+    }
+
 
 }

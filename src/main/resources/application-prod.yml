@@ -19,21 +19,21 @@ spring:
       client:
         registration:
           google:
-            client-id: 603364375521-ht159trgevgficpqua2a6jmqmfktq50f.apps.googleusercontent.com
-            client-secret: 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
+            client-id: ${GOOGLE_CLIENT_ID_PROD}
+            client-secret: ${GOOGLE_SECRET_PROD}
             scope: profile, email
             redirect-uri: "{baseUrl}/login/oauth2/code/google"
           facebook:
-            client-id: 1055232082490271
-            client-secret: 2efda36eb8cfd084ac3f59d5de367de8
+            client-id: ${FACEBOOK_CLIENT_ID_PROD}
+            client-secret: ${FACEBOOK_SECRET_PROD}
             scope: public_profile, email
             redirect-uri: "{baseUrl}/login/oauth2/code/facebook"
 
   mail:
     host: smtp.porkbun.com
     port: 50587
-    username: amine@sarafbrk.com
-    password: SarafBrkAmine24$
+    username: ${MAIL_USERNAME_PROD}
+    password: ${MAIL_PASSWORD_PROD}
     properties:
       mail:
         smtp:
@@ -91,6 +91,3 @@ server:
     key-store-type: PKCS12
     key-alias: saraf
   port: 8088
-#  address: 0.0.0.0
-
-

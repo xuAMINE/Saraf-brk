@@ -104,4 +104,9 @@ public class UserService {
         return phoneNumber != null && !phoneNumber.isEmpty();
     }
 
+    public String getName(Principal connectedUser) {
+        var user = (User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
+        return user.getFirstname();
+    }
+
 }

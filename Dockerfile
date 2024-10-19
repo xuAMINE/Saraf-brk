@@ -17,7 +17,7 @@ EXPOSE 8088
 
 CMD java -jar \
          -Dspring.profiles.active=prod \
-         -Dspring.datasource.url=jdbc:postgresql://34.16.181.252:5432/sarafBRKdb \
-         -Dspring.datasource.username=postgres \
-         -Dspring.datasource.password=SarafBrkDb24$ \
+         -Dspring.datasource.url=jdbc:postgresql://${DB_HOST}:${DB_PORT}/${DB_NAME} \
+         -Dspring.datasource.username=${DB_USER} \
+         -Dspring.datasource.password=${DB_PASSWORD} \
          security-1.0.2.jar
