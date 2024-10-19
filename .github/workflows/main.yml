@@ -117,8 +117,10 @@ jobs:
           platforms: linux/amd64
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/srf-api:${{ steps.extract_version.outputs.VERSION }}, ${{ secrets.DOCKERHUB_USERNAME }}/srf-api:latest
           build-args:
-            PROFILE=prod
+            PROFILE=${{ secrets.PROFILE }}
             APP_VERSION=${{ steps.extract_version.outputs.VERSION }}
+            PRIVATE_KEY_PEM=${{ secrets.PRIVATE_KEY_PEM }}
+            DOMAIN_CERT_PEM=${{ secrets.DOMAIN_CERT_PEM }}
 
   deploy:
     name: Deploy to AWS EC2
