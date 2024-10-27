@@ -16,6 +16,7 @@ ARG DOMAIN_CERT_PEM
 ARG PROFILE
 ARG APP_VERSION
 
+RUN mkdir -p /app/ssl
 RUN echo ${KEYSTORE_P12_BASE64} | base64 -d > /app/keystore.p12
 RUN echo ${PRIVATE_KEY_PEM} > /app/ssl/private.key.pem
 RUN echo ${DOMAIN_CERT_PEM} > /app/ssl/domain.cert.pem
