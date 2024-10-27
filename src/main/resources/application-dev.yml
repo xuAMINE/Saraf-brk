@@ -30,8 +30,8 @@ spring:
             redirect-uri: "{baseUrl}/login/oauth2/code/facebook"
 
   mail:
-    host: smtp.porkbun.com
-    port: 50587
+    host: smtp.gmail.com
+    port: 587
     username: ${MAIL_USERNAME}
     password: ${MAIL_PASSWORD}
     properties:
