@@ -17,7 +17,7 @@ ARG DOMAIN_CERT_PEM
 ARG PROFILE
 ARG APP_VERSION
 
-RUN aws s3 cp s3://your-bucket-name/ssl/keystore.p12 /app/ssl/keystore.p12 \
+RUN aws s3 cp s3://saraf-brk/domain/keystore.p12 /app/ssl/keystore.p12 \
     && chmod 644 /app/ssl/keystore.p12
 
 RUN echo ${PRIVATE_KEY_PEM} > /app/ssl/private.key.pem
