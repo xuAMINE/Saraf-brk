@@ -79,6 +79,7 @@ jobs:
           CORS_ORIGINS_PROD: ${{ secrets.CORS_ORIGINS_PROD }}
           JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
           ACTIVATION_URL: ${{ secrets.ACTIVATION_URL }}
+          KEY_STORE_PASSWORD: ${{ secrets.KEY_STORE_PASSWORD }}
         run: mvn clean package -DskipTests
 
   build-image:
