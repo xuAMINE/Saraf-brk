@@ -10,15 +10,16 @@ WORKDIR /app
 
 COPY --from=build /sarafBRK/target/security-*.jar /app/
 
-ARG KEYSTORE_P12_BASE64
+RUN yum install -y aws-cli
+
 ARG PRIVATE_KEY_PEM
 ARG DOMAIN_CERT_PEM
 ARG PROFILE
 ARG APP_VERSION
 
-RUN mkdir -p /app/ssl
-RUN echo ${KEYSTORE_P12_BASE64} | base64 -d > /app/keystore.p12 \
-    && chmod 644 /app/keystore.p12
+RUN aws s3 cp s3://your-bucket-name/ssl/keystore.p12 /app/ssl/keystore.p12 \
+    && chmod 644 /app/ssl/keystore.p12
+
 RUN echo ${PRIVATE_KEY_PEM} > /app/ssl/private.key.pem
 RUN echo ${DOMAIN_CERT_PEM} > /app/ssl/domain.cert.pem
 
@@ -29,4 +30,6 @@ CMD java -jar \
          -Dspring.datasource.url=jdbc:postgresql://${DB_HOST}:${DB_PORT}/${DB_NAME} \
          -Dspring.datasource.username=${DB_USER} \
          -Dspring.datasource.password=${DB_PASSWORD} \
+         -Djavax.net.ssl.keyStore=/app/ssl/keystore.p12 \
+         -Djavax.net.ssl.keyStorePassword=${KEY_STORE_PASSWORD} \
          security-1.0.2.jar
