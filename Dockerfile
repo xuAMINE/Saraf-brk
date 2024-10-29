@@ -13,13 +13,14 @@ COPY --from=build /sarafBRK/target/security-*.jar /app/
 # Install AWS CLI to access S3
 RUN yum install -y aws-cli
 
-# Download the files from S3 bucket to /app/ssl during container runtime
-RUN mkdir -p /app/ssl
-
+# Expose the application port
 EXPOSE 8088
 
-CMD aws s3 cp s3://saraf-brk/domain/private.key.pem /app/ssl/private.key.pem && \
-    aws s3 cp s3://saraf-brk/domain/keystore.p12 /app/ssl/keystore.p12 && \
+# Create the /app/ssl directory for the keystore files
+RUN mkdir -p /app/ssl
+
+CMD aws s3 cp s3://your-bucket-name/private.key.pem /app/ssl/private.key.pem && \
+    aws s3 cp s3://your-bucket-name/keystore.p12 /app/ssl/keystore.p12 && \
     java -jar \
     -Dspring.profiles.active=prod \
     -Dspring.datasource.url=jdbc:postgresql://${DB_HOST}:${DB_PORT}/${DB_NAME} \
