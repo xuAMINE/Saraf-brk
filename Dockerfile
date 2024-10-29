@@ -10,22 +10,17 @@ WORKDIR /app
 
 COPY --from=build /sarafBRK/target/security-*.jar /app/
 
+# Install AWS CLI to access S3
 RUN yum install -y aws-cli
 
-ARG PRIVATE_KEY_PEM_BASE64
-ARG KEYSTORE_P12_BASE64
-ARG PROFILE
-ARG APP_VERSION
-
-# Decode the Base64 secrets
-RUN mkdir -p /app/ssl && \
-    echo "$PRIVATE_KEY_PEM_BASE64" | tr -d '\n' | base64 -d > /app/ssl/private.key.pem && \
-    echo "$KEYSTORE_P12_BASE64" | tr -d '\n' | base64 -d > /app/ssl/keystore.p12 && \
-    ls -l /app/ssl
+# Download the files from S3 bucket to /app/ssl during container runtime
+RUN mkdir -p /app/ssl
 
 EXPOSE 8088
 
-CMD java -jar \
+CMD aws s3 cp s3://saraf-brk/domain/private.key.pem /app/ssl/private.key.pem && \
+    aws s3 cp s3://saraf-brk/domain/keystore.p12 /app/ssl/keystore.p12 && \
+    java -jar \
     -Dspring.profiles.active=prod \
     -Dspring.datasource.url=jdbc:postgresql://${DB_HOST}:${DB_PORT}/${DB_NAME} \
     -Dspring.datasource.username=${DB_USER} \

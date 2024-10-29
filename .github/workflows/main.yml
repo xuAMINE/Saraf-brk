@@ -1,4 +1,4 @@
-name : SRF API Pipeline
+name: SRF API Pipeline
 
 on:
   push:
@@ -80,6 +80,8 @@ jobs:
           JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
           ACTIVATION_URL: ${{ secrets.ACTIVATION_URL }}
           KEY_STORE_PASSWORD: ${{ secrets.KEY_STORE_PASSWORD }}
+          PROFILE: ${{ secrets.PROFILE }}
+          APP_VERSION: ${{ steps.extract_version.outputs.VERSION }}
         run: mvn clean package -DskipTests
 
   build-image:
@@ -100,8 +102,7 @@ jobs:
 
       - name: Extract project version
         id: extract_version
-        run:
-          echo "VERSION=$(mvn -q -Dexec.executable='echo' -Dexec.args='${project.version}' --non-recursive exec:exec)" >> $GITHUB_OUTPUT
+        run: echo "VERSION=$(mvn -q -Dexec.executable='echo' -Dexec.args='${project.version}' --non-recursive exec:exec)" >> $GITHUB_OUTPUT
 
       - name: Login to DockerHub
         uses: docker/login-action@v3
@@ -120,13 +121,11 @@ jobs:
           build-args:
             PROFILE=${{ secrets.PROFILE }}
             APP_VERSION=${{ steps.extract_version.outputs.VERSION }}
-            PRIVATE_KEY_PEM_BASE64=${{ secrets.PRIVATE_KEY_PEM_BASE64 }}
-            KEYSTORE_P12_BASE64=${{ secrets.KEYSTORE_P12_BASE64 }}
 
   deploy:
     name: Deploy to AWS EC2
     runs-on: ubuntu-latest
-    needs: [ build-image ]
+    needs: [build-image]
     steps:
       - name: Copy PEM file
         run: |
