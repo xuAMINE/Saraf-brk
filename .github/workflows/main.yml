@@ -120,7 +120,8 @@ jobs:
           build-args:
             PROFILE=${{ secrets.PROFILE }}
             APP_VERSION=${{ steps.extract_version.outputs.VERSION }}
-            PRIVATE_KEY_PEM=${{ secrets.PRIVATE_KEY_PEM }}
+            PRIVATE_KEY_PEM_BASE64=${{ secrets.PRIVATE_KEY_PEM_BASE64 }}
+            KEYSTORE_P12_BASE64=${{ secrets.KEYSTORE_P12_BASE64 }}
 
   deploy:
     name: Deploy to AWS EC2
