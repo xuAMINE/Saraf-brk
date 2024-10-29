@@ -20,8 +20,9 @@ ARG APP_VERSION
 # Decode the Base64 secrets
 RUN mkdir -p /app/ssl && \
     echo "$PRIVATE_KEY_PEM_BASE64" | base64 -d > /app/ssl/private.key.pem && \
-    echo "$KEYSTORE_P12_BASE64" | base64 -d > /app/ssl/keystore.p12 \
+    echo "$KEYSTORE_P12_BASE64" | base64 -d > /app/ssl/keystore.p12
 
+# Verify files have been created
 RUN ls -l /app/ssl
 
 EXPOSE 8088
