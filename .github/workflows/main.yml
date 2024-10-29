@@ -1,4 +1,4 @@
-name: SRF API Pipeline
+name : SRF API Pipeline
 
 on:
   push:
@@ -72,16 +72,13 @@ jobs:
           DB_HOST: ${{ secrets.DB_HOST }}
           DB_PORT: ${{ secrets.DB_PORT }}
           DB_NAME: ${{ secrets.DB_NAME }}
-          DB_USER: ${{ secrets.DB_USER }}
+          DB_USER: ${{ secrets.DB_USERNAME }}
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-          MAIL_USERNAME: ${{ secrets.MAIL_USERNAME_PROD }}
-          MAIL_PASSWORD: ${{ secrets.MAIL_PASSWORD_PROD }}
+          MAIL_USERNAME: ${{ secrets.MAIL_USERNAME }}
+          MAIL_PASSWORD: ${{ secrets.MAIL_PASSWORD }}
           CORS_ORIGINS_PROD: ${{ secrets.CORS_ORIGINS_PROD }}
           JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
           ACTIVATION_URL: ${{ secrets.ACTIVATION_URL }}
-          KEY_STORE_PASSWORD: ${{ secrets.KEY_STORE_PASSWORD }}
-          PROFILE: ${{ secrets.PROFILE }}
-          APP_VERSION: ${{ steps.extract_version.outputs.VERSION }}
         run: mvn clean package -DskipTests
 
   build-image:
@@ -119,13 +116,13 @@ jobs:
           platforms: linux/amd64
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/srf-api:${{ steps.extract_version.outputs.VERSION }}, ${{ secrets.DOCKERHUB_USERNAME }}/srf-api:latest
           build-args:
-            PROFILE=${{ secrets.PROFILE }}
+            PROFILE=prod
             APP_VERSION=${{ steps.extract_version.outputs.VERSION }}
 
   deploy:
     name: Deploy to AWS EC2
     runs-on: ubuntu-latest
-    needs: [build-image]
+    needs: [ build-image ]
     steps:
       - name: Copy PEM file
         run: |
