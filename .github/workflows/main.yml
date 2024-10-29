@@ -121,7 +121,6 @@ jobs:
             PROFILE=${{ secrets.PROFILE }}
             APP_VERSION=${{ steps.extract_version.outputs.VERSION }}
             PRIVATE_KEY_PEM=${{ secrets.PRIVATE_KEY_PEM }}
-            DOMAIN_CERT_PEM=${{ secrets.DOMAIN_CERT_PEM }}
 
   deploy:
     name: Deploy to AWS EC2
