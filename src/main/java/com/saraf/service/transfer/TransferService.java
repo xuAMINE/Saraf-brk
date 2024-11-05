@@ -75,6 +75,10 @@ public class TransferService {
         return transferRepository.findAllForAdmin(pageable);
     }
 
+    public TransferAdminDTO getTransferById(Integer transferId) {
+        return transferRepository.findTransferById(transferId);
+    }
+
     public Page<TransferAdminDTO> getPendingTransfersForAdmin(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         return transferRepository.findAllPendingForAdmin(pageable);

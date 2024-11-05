@@ -8,6 +8,7 @@ import com.saraf.security.user.UserRepository;
 import com.saraf.service.rate.ExchangeRateService;
 import com.saraf.service.recipient.RecipientRequest;
 import com.saraf.service.recipient.RecipientService;
+import com.saraf.service.telegram.TelegramBot;
 import com.saraf.service.transfer.PaymentMethod;
 import com.saraf.service.transfer.TransferRequest;
 import com.saraf.service.transfer.TransferService;
@@ -33,14 +34,15 @@ public class SarafApplication {
 		SpringApplication.run(SarafApplication.class, args);
 	}
 
-/*	@Bean
+	@Bean
 	public CommandLineRunner commandLineRunner(
 			AuthenticationService service,
 			RecipientService recipientService,
 			AuthenticationManager authenticationManager,
 			UserRepository userRepository,
 			TransferService transferService,
-			ExchangeRateService exchangeRateService
+			ExchangeRateService exchangeRateService,
+			TelegramBot telegramBot
 	) {
 		return args -> {
 			var admin = RegisterRequest.builder()
@@ -81,6 +83,8 @@ public class SarafApplication {
 			transferService.addTransfer(transfer);
 
 			SecurityContextHolder.clearContext();
+
+			telegramBot.sendMessageToChannel("Starting app");
 		};
-	}*/
+	}
 }

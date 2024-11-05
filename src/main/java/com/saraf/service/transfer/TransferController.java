@@ -1,6 +1,7 @@
 package com.saraf.service.transfer;
 
 import com.saraf.security.admin.s3.S3Service;
+import com.saraf.service.telegram.TelegramBot;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -16,11 +17,14 @@ import java.util.List;
 public class TransferController {
 
     private final TransferService transferService;
+    private final TelegramBot telegramBot;
     private final S3Service s3Service;
 
     @PostMapping("/add")
     public ResponseEntity<Transfer> add(@RequestBody @Valid TransferRequest request) {
         Transfer transfer = transferService.addTransfer(request);
+        TransferAdminDTO telegramTransfer = transferService.getTransferById(transfer.getId());
+        telegramBot.sendTransferToChannel(telegramTransfer);
         return ResponseEntity.status(HttpStatus.CREATED).body(transfer);
     }
 
