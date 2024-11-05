@@ -3,6 +3,7 @@ package com.saraf.service.telegram;
 import com.saraf.service.transfer.Transfer;
 import com.saraf.service.transfer.TransferAdminDTO;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -14,8 +15,10 @@ import java.net.URL;
 @RequiredArgsConstructor
 public class TelegramBot {
 
-    private static final String BOT_TOKEN = "7432332647:AAGVk09oaTxAA_ZqtCbnCwbzHVcpPIQAjRI";
-    private static final String CHANNEL_ID = "-1002196827583";
+    @Value("${application.telegram.bot-token}")
+    private String BOT_TOKEN;
+    @Value("${application.telegram.channel-id}")
+    private String CHANNEL_ID;
 
     public void sendMessageToChannel(String message) {
         try {

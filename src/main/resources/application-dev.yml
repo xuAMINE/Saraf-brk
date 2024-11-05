@@ -58,6 +58,9 @@ application:
       activation-url: ${ACTIVATION_URL}
   cors:
     origins: ${CORS_ORIGINS_DEV}
+  telegram:
+    bot-token: ${TELEGRAM_BOT_TOKEN}
+    channel-id: ${TELEGRAM_CHANNEL_ID}
 
 logging:
   level:

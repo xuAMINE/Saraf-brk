@@ -3,6 +3,7 @@ package com.saraf.service.transfer;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.saraf.security.admin.s3.S3Service;
 import com.saraf.security.exception.TransferNotPendingException;
+import com.saraf.service.telegram.TelegramBot;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,7 @@ import java.util.List;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
+import static org.postgresql.hostchooser.HostRequirement.any;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -39,6 +41,9 @@ class TransferControllerTest {
     @MockBean
     private S3Service s3Service;
 
+    @MockBean
+    private TelegramBot telegramBot;
+
     @Test
     @WithMockUser(roles = "USER")
     void testAddTransfer_Success() throws Exception {
@@ -53,7 +58,12 @@ class TransferControllerTest {
         transfer.setId(1);
         transfer.setAmount(request.getAmount());
 
+        TransferAdminDTO telegramTransfer = transferService.getTransferById(transfer.getId());
+        telegramBot.sendTransferToChannel(telegramTransfer);
+
         Mockito.when(transferService.addTransfer(any(TransferRequest.class))).thenReturn(transfer);
+        Mockito.when(transferService.getTransferById(transfer.getId())).thenReturn(telegramTransfer);
+        Mockito.doNothing().when(telegramBot).sendTransferToChannel(telegramTransfer);
 
         mockMvc.perform(post("/api/v1/transfer/add")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -61,6 +71,10 @@ class TransferControllerTest {
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id").value(1))
                 .andExpect(jsonPath("$.amount").value(100.00));
+
+        Mockito.verify(transferService, Mockito.times(2)).getTransferById(transfer.getId());
+        Mockito.verify(telegramBot, Mockito.times(2)).sendTransferToChannel(telegramTransfer);
+
     }
 
     @Test
