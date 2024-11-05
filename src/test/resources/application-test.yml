@@ -59,8 +59,8 @@ application:
   cors:
     origins: ${CORS_ORIGINS_DEV}
   telegram:
-    bot-token: ${TELEGRAM_BOT_TOKEN}
-    channel-id: ${TELEGRAM_CHANNEL_ID}
+    bot-token: 111
+    channel-id: 111
 
 
 server:
