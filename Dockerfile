@@ -19,4 +19,4 @@ CMD java -jar \
          -Dspring.datasource.url=jdbc:postgresql://34.16.181.252:5432/sarafBRKdb \
          -Dspring.datasource.username=postgres \
          -Dspring.datasource.password=SarafBrkDb24$ \
-         security-1.0.2.jar
+         security-1.1.0.jar
