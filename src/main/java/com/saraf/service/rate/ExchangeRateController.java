@@ -1,6 +1,9 @@
 package com.saraf.service.rate;
 
+import com.saraf.security.admin.ApiResponse;
+import com.saraf.service.telegram.TelegramBot;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -10,12 +13,13 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class ExchangeRateController {
 
-    private final ExchangeRateService ExchangeRateService;
+    private final ExchangeRateService exchangeRateService;
+    private final TelegramBot telegramBot;
 
     @GetMapping
     public ResponseEntity<Double> getRate() {
         try {
-            return ResponseEntity.ok(ExchangeRateService.getCurrentRate());
+            return ResponseEntity.ok(exchangeRateService.getCurrentRate());
         } catch (NullPointerException e) {
             return ResponseEntity.notFound().build();
         }
@@ -24,11 +28,16 @@ public class ExchangeRateController {
     @PostMapping()
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> updateRate(@RequestParam Integer newRate) {
+        int oldRate = (int) exchangeRateService.getCurrentRate();
+
         if (newRate < 300 && newRate > 100){
-            ExchangeRateService.updateRate(newRate);
-            return ResponseEntity.ok().build();
+            exchangeRateService.updateRate(newRate);
+            telegramBot.sendNewRateToChannel(newRate, oldRate);
+
+            return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponse(true, "Rate was successfully updated", "" + newRate));
         } else {
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse(false, "Rate was invalid", "" + newRate));
         }
     }
+
 }

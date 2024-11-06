@@ -1,8 +1,8 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/jwt_security
-    username: ${DB_USER}
-    password: ${DB_PASSWORD_DEV}
+    url: jdbc:postgresql://sarafdb.c302gk4uasl6.us-west-1.rds.amazonaws.com:5432/sarafdb
+    username: postgres
+    password: SarafBrkDataBase24$
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:

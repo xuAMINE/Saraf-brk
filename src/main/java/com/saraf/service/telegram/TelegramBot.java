@@ -42,6 +42,20 @@ public class TelegramBot {
         sendMessageToChannel(message);
     }
 
+
+    public void sendNewRateToChannel(Integer newRate, int oldRate) {
+        String message = String.format(
+                """
+                📈 *Exchange Rate Update* 📈
+                    - Previous Rate: %d
+                    - New Rate: %d""",
+                oldRate,
+                newRate
+        );
+
+        sendMessageToChannel(message);
+    }
+
     private String formatTransferMessage(TransferAdminDTO transferDto) {
         return String.format(
                 "📤 *NEW TRANSFER*\n\n" +
