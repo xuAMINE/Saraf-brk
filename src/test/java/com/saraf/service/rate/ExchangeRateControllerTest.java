@@ -51,7 +51,7 @@ class ExchangeRateControllerTest {
 
         mockMvc.perform(post("/api/v1/rate")
                 .param("newRate", "200")) // Pass newRate as request parameter
-                .andExpect(status().isOk());
+                .andExpect(status().isCreated());
 
     }
 
