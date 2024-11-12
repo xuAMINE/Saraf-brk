@@ -16,4 +16,7 @@ EXPOSE 8088
 
 CMD java -jar \
          -Dspring.profiles.active=prod \
+         -Dspring.datasource.url=jdbc:postgresql://sarafdb.c302gk4uasl6.us-west-1.rds.amazonaws.com:5432/sarafdb \
+         -Dspring.datasource.username=postgres \
+         -Dspring.datasource.password=SarafBrkDataBase24$ \
          security-1.1.0.jar
