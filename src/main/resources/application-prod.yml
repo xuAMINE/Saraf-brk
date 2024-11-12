@@ -1,12 +1,12 @@
 spring:
   datasource:
-    url: jdbc:postgresql://${DB_HOST_RDS}:${DB_PORT}/${DB_NAME_RDS}
-    username: ${DB_USER}
-    password: ${DB_PASSWORD_RDS}
+    url: jdbc:postgresql://sarafdb.c302gk4uasl6.us-west-1.rds.amazonaws.com:5432/sarafdb
+    username: postgres
+    password: SarafBrkDataBase24$
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: create
     properties:
       hibernate:
         format_sql: true
