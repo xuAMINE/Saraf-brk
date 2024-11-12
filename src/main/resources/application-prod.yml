@@ -70,6 +70,9 @@ logging:
   level:
     root: INFO
     org.springframework.web: WARN
+    org.springframework.core.env: DEBUG
+    org.springframework.boot.autoconfigure.jdbc: DEBUG
+    com.zaxxer.hikari: DEBUG
     org:
       springframework:
         security: DEBUG
