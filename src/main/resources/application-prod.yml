@@ -1,8 +1,8 @@
 spring:
   datasource:
-    url: jdbc:postgresql://sarafdb.c302gk4uasl6.us-west-1.rds.amazonaws.com:5432/sarafdb
+    url: jdbc:postgresql://${DB_HOST_RDS}:5432/${DB_NAME_RDS}
     username: postgres
-    password: SarafBrkDataBase24$
+    password: ${DB_PASSWORD_RDS}
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
@@ -19,16 +19,16 @@ spring:
       client:
         registration:
           google:
-            client-id: 603364375521-ht159trgevgficpqua2a6jmqmfktq50f.apps.googleusercontent.com
-            client-secret: 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
+            client-id: ${GOOGLE_CLIENT_ID_PROD}
+            client-secret: ${GOOGLE_SECRET_PROD}
             scope: profile, email
             redirect-uri: "{baseUrl}/login/oauth2/code/google"
 
   mail:
     host: smtp.porkbun.com
     port: 50587
-    username: amine@sarafbrk.com
-    password: SarafBrkAmine24$
+    username: ${MAIL_USERNAME_PROD}
+    password: ${MAIL_PASSWORD_PROD}
     properties:
       mail:
         smtp:
@@ -48,18 +48,18 @@ spring:
 application:
   security:
     jwt:
-      secret-key: 404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970
+      secret-key: ${JWT_SECRET_KEY}
       expiration: 1200000 # 20 minute 1200000
       refresh-token:
         expiration: 604800000 # 7 days
   mailing:
     frontend:
-      activation-url: https://api.arafbrk.com:8088/api/v1/auth/activate-account?verToken=
+      activation-url: ${ACTIVATION_URL_PROD}
   cors:
-    origins: http://127.0.0.1:5501,http://172.31.18.95:8088,https://sarafbrk.com
+    origins: ${CORS_ORIGINS_PROD}
   telegram:
-    bot-token: 7432332647:AAGVk09oaTxAA_ZqtCbnCwbzHVcpPIQAjRI
-    channel-id: -1002196827583
+    bot-token: ${TELEGRAM_BOT_TOKEN}
+    channel-id: ${TELEGRAM_CHANNEL_ID}
 
 logging:
   level:
@@ -88,7 +88,7 @@ management:
 server:
   ssl:
     key-store: keystore.p12
-    key-store-password: saraf
+    key-store-password: ${KEY_STORE_PASSWORD}
     key-store-type: PKCS12
     key-alias: saraf
   port: 8088
