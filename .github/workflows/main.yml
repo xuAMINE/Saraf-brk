@@ -134,7 +134,7 @@ jobs:
         env:
           SPRING_PROFILES_ACTIVE: prod
         run: |
-          ssh -o StrictHostKeyChecking=no -i ~/.ssh/sarafKEY.pem ec2-user@13.57.42.52 << 'EOF'
+          ssh -o StrictHostKeyChecking=no -i ~/.ssh/sarafKEY.pem ec2-user@54.215.245.124 << 'EOF'
           docker pull ${{ secrets.DOCKERHUB_USERNAME }}/srf-api:latest
           docker stop srf-container || true
           docker rm srf-container || true
