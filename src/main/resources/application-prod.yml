@@ -88,7 +88,7 @@ management:
 server:
   ssl:
     key-store: keystore.p12
-    key-store-password: saraf
+    key-store-password: ${KEY_STORE_PASSWORD}
     key-store-type: PKCS12
     key-alias: saraf
   port: 8088
