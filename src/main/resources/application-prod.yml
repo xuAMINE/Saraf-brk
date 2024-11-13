@@ -19,21 +19,16 @@ spring:
       client:
         registration:
           google:
-            client-id: ${GOOGLE_CLIENT_ID_PROD}
-            client-secret: ${GOOGLE_SECRET_PROD}
+            client-id: 603364375521-ht159trgevgficpqua2a6jmqmfktq50f.apps.googleusercontent.com
+            client-secret: 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
             scope: profile, email
             redirect-uri: "{baseUrl}/login/oauth2/code/google"
-          facebook:
-            client-id: ${FACEBOOK_CLIENT_ID_PROD}
-            client-secret: ${FACEBOOK_SECRET_PROD}
-            scope: public_profile, email
-            redirect-uri: "{baseUrl}/login/oauth2/code/facebook"
 
   mail:
     host: smtp.porkbun.com
     port: 50587
-    username: ${MAIL_USERNAME_PROD}
-    password: ${MAIL_PASSWORD_PROD}
+    username: amine@sarafbrk.com
+    password: SarafBrkAmine24$
     properties:
       mail:
         smtp:
@@ -53,18 +48,18 @@ spring:
 application:
   security:
     jwt:
-      secret-key: ${JWT_SECRET_KEY}
+      secret-key: 404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970
       expiration: 1200000 # 20 minute 1200000
       refresh-token:
         expiration: 604800000 # 7 days
   mailing:
     frontend:
-      activation-url: ${ACTIVATION_URL_PROD}
+      activation-url: https://api.arafbrk.com:8088/api/v1/auth/activate-account?verToken=
   cors:
-    origins: ${CORS_ORIGINS_PROD}
+    origins: http://127.0.0.1:5501,http://172.31.18.95:8088,https://sarafbrk.com
   telegram:
-    bot-token: ${TELEGRAM_BOT_TOKEN}
-    channel-id: ${TELEGRAM_CHANNEL_ID}
+    bot-token: 7432332647:AAGVk09oaTxAA_ZqtCbnCwbzHVcpPIQAjRI
+    channel-id: -1002196827583
 
 logging:
   level:
@@ -93,7 +88,7 @@ management:
 server:
   ssl:
     key-store: keystore.p12
-    key-store-password: ${KEY_STORE_PASSWORD}
+    key-store-password: saraf
     key-store-type: PKCS12
     key-alias: saraf
   port: 8088
