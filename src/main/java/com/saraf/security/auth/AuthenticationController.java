@@ -1,5 +1,6 @@
 package com.saraf.security.auth;
 
+import com.saraf.security.admin.ApiResponse;
 import com.saraf.security.config.JwtService;
 import com.saraf.security.email.ResendVerificationRequest;
 import com.saraf.security.exception.EmailValidationException;
@@ -56,17 +57,23 @@ public class AuthenticationController {
   }
 
   @GetMapping("/activate-account")
-  public ResponseEntity<String> activateAccount(@RequestParam String verToken) throws MessagingException {
+  public ResponseEntity<?> activateAccount(@RequestParam String verToken, @RequestParam(required = false) Boolean redirect) throws MessagingException {
     try {
       boolean isActivated = service.activateAccount(verToken);
       if (isActivated) {
-        return ResponseEntity.status(HttpStatus.FOUND)
-                .location(URI.create("https://sarafbrk.com/account-activated/"))
-                .build();
-      } else
+        if (Boolean.TRUE.equals(redirect)) {
+          // Redirect if the 'redirect' parameter is true
+          return ResponseEntity.status(HttpStatus.FOUND)
+                  .location(URI.create("https://sarafbrk.com/account-activated/"))
+                  .build();
+        } else {
+          // Return a response for manual activation
+          return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ApiResponse(true, "Account activated"));
+        }
+      } else {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body("Failed to activate account. Please check your token or request a new one.");
-
+      }
     } catch (EmailValidationException e) {
       return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
     } catch (RuntimeException e) {

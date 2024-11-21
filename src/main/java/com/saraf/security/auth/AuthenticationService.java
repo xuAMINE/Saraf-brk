@@ -46,7 +46,7 @@ public class AuthenticationService {
   @Value("${application.mailing.frontend.activation-url}")
   private String activationUrl;
 
-  public AuthenticationResponse register(RegisterRequest request) throws MessagingException, UnsupportedEncodingException {
+    public AuthenticationResponse register(RegisterRequest request) throws MessagingException, UnsupportedEncodingException {
     var user = User.builder()
         .firstname(request.getFirstname())
         .lastname(request.getLastname())
@@ -145,11 +145,13 @@ public class AuthenticationService {
   private void sendValidationEmail(User user) throws MessagingException, UnsupportedEncodingException {
     var newToken = generateAndSaveActivationToken(user);
 
-    emailService.sendEmail(
+      String activationUrlRedirect = "&redirect=true";
+
+      emailService.sendEmail(
             user.getEmail(),
             user.getFullName(),
             EmailTemplateName.ACTIVATE_ACCOUNT,
-            activationUrl+newToken,
+            activationUrl + newToken + activationUrlRedirect,
             newToken,
             "Account activation"
     );
