@@ -22,6 +22,7 @@ import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.web.servlet.function.RequestPredicates.param;
 
 
 @SpringBootTest
@@ -38,7 +39,7 @@ public class AuthenticationControllerTest {
     private JwtService jwtService;
 
     @Test
-    void activateAccount_SuccessfulActivation() throws Exception {
+    void activateAccount_WithoutRedirect_SuccessfulActivation() throws Exception {
         String token = "validToken";
 
         // Mock the service method to return true for successful activation
@@ -46,8 +47,23 @@ public class AuthenticationControllerTest {
 
         mockMvc.perform(get("/api/v1/auth/activate-account")
                         .param("verToken", token))
-                .andExpect(status().isFound())
-                .andExpect(redirectedUrl("https://sarafbrk.com/account-activated/"));
+                .andExpect(status().isAccepted()) // Expect 202 Accepted
+                .andExpect(jsonPath("$.success").value(true)) // Check JSON response
+                .andExpect(jsonPath("$.message").value("Account activated")); // Check message
+    }
+
+    @Test
+    void activateAccount_WithRedirect_SuccessfulActivation() throws Exception {
+        String token = "validToken";
+
+        // Mock the service method to return true for successful activation
+        when(authenticationService.activateAccount(token)).thenReturn(true);
+
+        mockMvc.perform(get("/api/v1/auth/activate-account")
+                        .param("verToken", token)
+                        .param("redirect", "true"))
+                .andExpect(status().isFound()) // Expect 302 Redirect
+                .andExpect(redirectedUrl("https://sarafbrk.com/account-activated/")); // Redirect URL
     }
 
     @Test
