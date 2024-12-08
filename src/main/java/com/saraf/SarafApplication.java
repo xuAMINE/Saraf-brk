@@ -33,7 +33,7 @@ public class SarafApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(SarafApplication.class, args);
 	}
-/*
+
 	@Bean
 	public CommandLineRunner commandLineRunner(
 			AuthenticationService service,
@@ -86,5 +86,5 @@ public class SarafApplication {
 
 			telegramBot.sendMessageToChannel("Starting app");
 		};
-	}*/
+	}
 }
