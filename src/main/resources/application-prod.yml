@@ -86,9 +86,10 @@ management:
         enabled: true
 
 server:
-  port: 8088
+  port: 443
   ssl:
-    key-store: keystore.p12
-    key-store-password: ${KEY_STORE_PASSWORD}
+    enabled: true
+    key-store: /home/ec2-user/keystore.p12
+    key-store-password: your_password_here
     key-store-type: PKCS12
-    key-alias: saraf
+    key-alias: api.sarafbrk.com
