@@ -86,7 +86,7 @@ management:
         enabled: true
 
 server:
-  port: 443
+  port: 8088
   ssl:
     enabled: true
     key-store: /home/ec2-user/keystore.p12
