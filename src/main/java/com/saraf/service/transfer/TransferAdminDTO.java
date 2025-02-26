@@ -22,4 +22,5 @@ public class TransferAdminDTO {
     private String code;
     private String firstName;
     private String lastName;
+    private String ccp;
 }

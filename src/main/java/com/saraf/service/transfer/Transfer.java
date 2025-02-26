@@ -45,6 +45,8 @@ public class Transfer {
     @JsonBackReference
     private User user;
 
+    private String ccp;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "recipient_id")
     @JsonIgnore
