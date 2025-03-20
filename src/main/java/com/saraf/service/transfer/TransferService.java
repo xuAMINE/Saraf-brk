@@ -52,7 +52,6 @@ public class TransferService {
                 .code(request.getCode())
                 .user(user)
                 .recipient(recipientRepository.findByUserIdAndAndCcp(getCurrentUser(), request.getCcp()))
-                .ccp(request.getCcp())
                 .build();
 
         return transferRepository.save(transfer);
