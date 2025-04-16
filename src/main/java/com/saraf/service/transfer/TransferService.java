@@ -6,7 +6,9 @@ import com.saraf.security.user.User;
 import com.saraf.security.user.UserRepository;
 import com.saraf.service.rate.ExchangeRate;
 import com.saraf.service.rate.ExchangeRateRepository;
+import com.saraf.service.recipient.Recipient;
 import com.saraf.service.recipient.RecipientRepository;
+import com.saraf.service.recipient.RecipientService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEventPublisher;
@@ -35,10 +37,16 @@ public class TransferService {
     private final RecipientRepository recipientRepository;
     private final ExchangeRateRepository rateRepository;
     private final AuditorAware<Integer> auditorAware;
+    private final RecipientService recipientService;
 
     public Transfer addTransfer(TransferRequest request) {
         var user = userRepository.findById(getCurrentUser())
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+
+        Recipient recipient =  recipientRepository.findByUserIdAndAndCcp(getCurrentUser(), request.getCcp());
+        if (recipient == null) {
+            recipientService.addOneTimeRecipient(request.getCcp(), user);
+        }
 
         ExchangeRate rate = rateRepository.findTopByOrderByIdDesc();
         double DZDtoUSD = rate.getCurrentRate();

@@ -115,7 +115,7 @@ class TransferServiceTest {
         int page = 0;
         int size = 10;
         TransferDTO transferDTO = new TransferDTO(1, BigDecimal.valueOf(120), BigDecimal.valueOf(108), Status.PENDING,
-                LocalDateTime.now(), "Jane Doe", "receipt1", PaymentMethod.VENMO, "1111");
+                LocalDateTime.now(), "Jane Doe", "receipt1", "00999999999",  PaymentMethod.VENMO, "1111");
 
         Page<TransferDTO> pageOfTransfers = new PageImpl<>(List.of(transferDTO));
 
@@ -134,7 +134,7 @@ class TransferServiceTest {
         int page = 0;
         int size = 10;
         TransferDTO transferDTO = new TransferDTO(1, BigDecimal.valueOf(120), BigDecimal.valueOf(108), Status.PENDING,
-                LocalDateTime.now(), "Jane Doe", "receipt1", PaymentMethod.VENMO, "1111");
+                LocalDateTime.now(), "Jane Doe", "receipt1", "00999999999", PaymentMethod.VENMO, "1111");
 
         Page<TransferDTO> pageOfTransfers = new PageImpl<>(List.of(transferDTO));
 
@@ -153,7 +153,7 @@ class TransferServiceTest {
         int page = 0;
         int size = 10;
         TransferAdminDTO transferDTO = new TransferAdminDTO(1, BigDecimal.valueOf(120), BigDecimal.valueOf(108), Status.PENDING,
-                LocalDateTime.now(), "Jane Doe", "receipt1", PaymentMethod.ZELLE,
+                LocalDateTime.now(), "Jane Doe", "receipt1", "00999999999", PaymentMethod.ZELLE,
                 "2222", "test1", "testLast");
 
         Page<TransferAdminDTO> pageOfTransfers = new PageImpl<>(List.of(transferDTO));
@@ -173,7 +173,7 @@ class TransferServiceTest {
         int page = 0;
         int size = 10;
         TransferAdminDTO transferDTO = new TransferAdminDTO(1, BigDecimal.valueOf(120), BigDecimal.valueOf(108), Status.PENDING,
-                LocalDateTime.now(), "Jane Doe", "receipt1", PaymentMethod.ZELLE, "2222", "test1", "testLast");
+                LocalDateTime.now(), "Jane Doe", "receipt1", "00999999999", PaymentMethod.ZELLE, "2222", "test1", "testLast");
 
         Page<TransferAdminDTO> pageOfTransfers = new PageImpl<>(List.of(transferDTO));
 

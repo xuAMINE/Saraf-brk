@@ -11,31 +11,31 @@ import org.springframework.stereotype.Repository;
 public interface TransferRepository extends JpaRepository<Transfer, Integer> {
 
     @Query("SELECT new com.saraf.service.transfer.TransferDTO(t.id, t.amount, t.amountReceived, t.status, t.transferDate, " +
-            "CASE WHEN r IS NULL THEN 'One Time Transfer' ELSE CONCAT(r.firstname, ' ', r.lastname) END, t.receipt, t.paymentMethod, t.code) " +
+            "CASE WHEN r IS NULL THEN 'One Time Transfer' ELSE CONCAT(r.firstname, ' ', r.lastname) END, r.ccp, t.receipt, t.paymentMethod, t.code) " +
             "FROM Transfer t LEFT JOIN t.recipient r WHERE t.user.id = :userId ORDER BY t.transferDate DESC")
     Page<TransferDTO> findTransfersByUserId(@Param("userId") Integer userId, Pageable pageable);
 
     @Query("SELECT new com.saraf.service.transfer.TransferDTO(t.id, t.amount, t.amountReceived, t.status, t.transferDate, " +
-            "CASE WHEN r IS NULL THEN 'One Time Transfer' ELSE CONCAT(r.firstname, ' ', r.lastname) END, t.receipt, t.paymentMethod, t.code) " +
+            "CASE WHEN r IS NULL THEN 'One Time Transfer' ELSE CONCAT(r.firstname, ' ', r.lastname) END, r.ccp, t.receipt, t.paymentMethod, t.code) " +
             "FROM Transfer t LEFT JOIN t.recipient r WHERE t.user.id = :userId " +
             "AND t.status NOT IN (com.saraf.service.transfer.Status.CANCELED) ORDER BY t.transferDate DESC")
     Page<TransferDTO> findAllNotCancelled(@Param("userId") Integer userId, Pageable pageable);
 
     @Query("SELECT new com.saraf.service.transfer.TransferAdminDTO(t.id, t.amount, t.amountReceived, t.status, t.transferDate, " +
             "CASE WHEN r IS NULL THEN 'One Time Transfer' ELSE CONCAT(r.firstname, ' ', r.lastname) END," +
-            " t.receipt, t.paymentMethod, t.code, t.user.firstname, t.user.lastname) " +
+            "r.ccp, t.receipt, t.paymentMethod, t.code, t.user.firstname, t.user.lastname) " +
             "FROM Transfer t LEFT JOIN t.recipient r ORDER BY t.transferDate DESC")
     Page<TransferAdminDTO> findAllForAdmin(Pageable pageable);
 
     @Query("SELECT new com.saraf.service.transfer.TransferAdminDTO(t.id, t.amount, t.amountReceived, t.status, t.transferDate, " +
             "CASE WHEN r IS NULL THEN 'One Time Transfer' ELSE CONCAT(r.firstname, ' ', r.lastname) END," +
-            " t.receipt, t.paymentMethod, t.code, t.user.firstname, t.user.lastname) " +
+            "r.ccp, t.receipt, t.paymentMethod, t.code, t.user.firstname, t.user.lastname) " +
             "FROM Transfer t LEFT JOIN t.recipient r WHERE t.status IN (com.saraf.service.transfer.Status.PENDING) ORDER BY t.transferDate DESC")
     Page<TransferAdminDTO> findAllPendingForAdmin(Pageable pageable);
 
     @Query("SELECT new com.saraf.service.transfer.TransferAdminDTO(t.id, t.amount, t.amountReceived, t.status, t.transferDate, " +
-            "CASE WHEN r IS NULL THEN 'One Time Transfer' ELSE CONCAT(r.firstname, ' ', r.lastname) END," +
-            " t.receipt, t.paymentMethod, t.code, t.user.firstname, t.user.lastname) " +
+            "CASE WHEN r IS NULL THEN 'One Time Transfer' ELSE CONCAT(r.firstname, ' ', r.lastname) END, " +
+            "r.ccp, t.receipt, t.paymentMethod, t.code, t.user.firstname, t.user.lastname) " +
             "FROM Transfer t LEFT JOIN t.recipient r WHERE t.id = :transferId")
     TransferAdminDTO findTransferById(Integer transferId);
 

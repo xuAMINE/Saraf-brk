@@ -59,8 +59,8 @@ application:
   cors:
     origins: ${CORS_ORIGINS_DEV}
   telegram:
-    bot-token: ${TELEGRAM_BOT_TOKEN}
-    channel-id: ${TELEGRAM_CHANNEL_ID}
+    bot-token: 404 #gibrish
+    channel-id: 404 #gibrish
 
 logging:
   level:

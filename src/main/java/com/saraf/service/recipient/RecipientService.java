@@ -5,7 +5,6 @@ import com.saraf.security.user.User;
 import com.saraf.security.user.UserRepository;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.dao.DuplicateKeyException;
 import org.springframework.data.domain.AuditorAware;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -28,11 +27,7 @@ public class RecipientService {
         Optional<Recipient> existingRecipient = Optional.ofNullable(recipientRepository.findByUserIdAndAndCcp(user.getId(), request.getCcp()));
 
         if (existingRecipient.isPresent()) {
-            Recipient recipient = existingRecipient.get();
-            if (recipient.isActive()) {
-                throw new DuplicateCcpException("Recipient already exists!");
-            }
-            recipient.setActive(true);
+            Recipient recipient = checkRecipient(request, existingRecipient);
             return recipientRepository.save(recipient);
         }
 
@@ -44,6 +39,37 @@ public class RecipientService {
         recipient.setDoContact(request.isDoContact());
         recipient.setUser(user);
         return recipientRepository.save(recipient);
+    }
+
+    private Recipient checkRecipient(RecipientRequest request, Optional<Recipient> existingRecipient) {
+        Recipient recipient = existingRecipient.get();
+
+        if (recipient.getFirstname().equalsIgnoreCase("OTR") && recipient.getLastname().equalsIgnoreCase("OTR")) {
+           recipient.setFirstname(request.getFirstName());
+           recipient.setLastname(request.getLastName());
+           recipient.setPhoneNumber(request.getPhoneNumber());
+           recipient.setDoContact(request.isDoContact());
+           return recipientRepository.save(recipient);
+        }
+
+        if (recipient.isActive()) {
+            throw new DuplicateCcpException("Recipient already exists!");
+        }
+
+        recipient.setActive(true);
+        return recipient;
+    }
+
+    public void addOneTimeRecipient(String ccp, User user) {
+
+        Recipient recipient = new Recipient();
+        recipient.setFirstname("OTR");
+        recipient.setLastname("OTR");
+        recipient.setCcp(ccp);
+        recipient.setUser(user);
+
+        recipientRepository.save(recipient);
+
     }
 
     public Recipient editRecipient(String ccp, @Valid EditRecipientRequest request) {

@@ -17,6 +17,7 @@ public class TransferDTO {
     private Status status;
     private LocalDateTime transferDate;
     private String recipientFullName;
+    private String recipientCCP;
     private String receipt;
     private PaymentMethod paymentMethod;
     private String code;
