@@ -61,7 +61,8 @@ public class TelegramBot {
                 "📤 *NEW TRANSFER*\n\n" +
                         "🏦 Recipient: %s\n" +
                         "💰 Amount: %s\n" +
-                        "💵 Amount Received: %s\n" +
+                        "💵 Amount to be Received: %s\n" +
+                        "💳 CCP: %s\n" +
                         "📅 Date: %s\n" +
                         "💳 Payment Method: %s\n" +
                         "🔢 Code: %s\n" +
@@ -69,6 +70,7 @@ public class TelegramBot {
                 transferDto.getRecipientFullName(),
                 transferDto.getAmount(),
                 transferDto.getAmountReceived(),
+                transferDto.getRecipientCCP(),
                 transferDto.getTransferDate().toLocalDate(),
                 transferDto.getPaymentMethod(),
                 transferDto.getCode(),
