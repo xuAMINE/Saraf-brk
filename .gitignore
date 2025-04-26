@@ -36,3 +36,5 @@ src/main/resources/secrets.env
 sarafKEY.pem
 public.key.pem
 keystore.p12.base64
+
+src/main/resources/templates/recipients.html
