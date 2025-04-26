@@ -1,6 +1,7 @@
 package com.saraf.security.admin;
 
 import com.saraf.security.admin.s3.S3Service;
+import com.saraf.security.email.EmailService;
 import com.saraf.security.exception.TransferNotFoundException;
 import com.saraf.security.exception.UserNotFoundException;
 import com.saraf.security.user.*;
@@ -25,8 +26,8 @@ import java.util.Collections;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -48,6 +49,9 @@ class AdminControllerTest {
 
     @MockBean
     private UserService userService;
+
+    @MockBean
+    private EmailService emailService;
 
     @Test
     @WithMockUser(roles = "ADMIN")
@@ -126,18 +130,22 @@ class AdminControllerTest {
     @Test
     @WithMockUser(roles = "ADMIN")
     void updateStatus_Success() throws Exception {
+        User testUser = new User();
+        testUser.setEmail("test@test.com");
+        testUser.setFirstname("testing");
+
         Transfer transfer = new Transfer();
         transfer.setStatus(Status.RECEIVED);
-
-        UpdateTransferStatusDTO updateRequest = new UpdateTransferStatusDTO();
-        updateRequest.setId(1);
-        updateRequest.setStatus(Status.RECEIVED);
+        transfer.setUser(testUser);
 
         when(transferService.updateStatus(anyInt(), any())).thenReturn(transfer);
 
+        doNothing().when(emailService).sendStatusUpdateEmail(anyString(), anyString(), any(Status.class));
+
         mockMvc.perform(patch("/api/v1/admin/update-status")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{ \"id\": 1, \"status\": \"RECEIVED\" }"))
+                        .content("{ \"id\": 1, \"status\": \"RECEIVED\" }")
+                        .with(csrf()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.status").value("RECEIVED"));
     }

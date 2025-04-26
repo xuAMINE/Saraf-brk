@@ -1,5 +1,6 @@
 package com.saraf.security.email;
 
+import com.saraf.service.transfer.Status;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
@@ -94,6 +95,31 @@ public class EmailService {
         mimeMessageHelper.setSubject("Thank you for contacting us!");
 
         String template = templateEngine.process(EmailTemplateName.CONTACT_CONFIRM.name(), context);
+        mimeMessageHelper.setText(template, true);
+
+        mailSender.send(mimeMessage);
+    }
+
+    public void sendStatusUpdateEmail(String name, String email, Status status) throws MessagingException, UnsupportedEncodingException {
+        MimeMessage mimeMessage = mailSender.createMimeMessage();
+        MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, MULTIPART_MODE_MIXED, UTF_8.name());
+        Map<String, Object> properties = new HashMap<>();
+        properties.put("name", name);
+        properties.put("status", status.toString().toUpperCase());
+        String message = status == Status.PROCESSING ? "We've received your payment and are now working on delivering the funds to your recipient in Algeria."
+                       : status == Status.RECEIVED ? "The funds have been successfully delivered to your recipient in Algeria. They are now able to withdraw them."
+                       : "Your transfer was canceled as we did not receive your payment. Please feel free to try again at your convenience.";
+        properties.put("message", message);
+
+        Context context = new Context();
+        context.setVariables(properties);
+
+        mimeMessageHelper.setFrom("amine@sarafbrk.com", "SARAF");
+        mimeMessageHelper.setTo(email);
+        mimeMessageHelper.setSubject("Transfer Status Update");
+
+
+        String template = templateEngine.process(EmailTemplateName.STATUS_UPDATE.name(), context);
         mimeMessageHelper.setText(template, true);
 
         mailSender.send(mimeMessage);
