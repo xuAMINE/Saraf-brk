@@ -8,7 +8,7 @@ public enum EmailTemplateName {
     ACTIVATE_ACCOUNT("activate_account"),
     RESET_PASSWORD("reset_password"),
     CONTACT_CONFIRM("contact_confirm"),
-    STATUS_UPDATE("status_update");
+    STATUS_CHANGE("status_change");
 
     private final String name;
 

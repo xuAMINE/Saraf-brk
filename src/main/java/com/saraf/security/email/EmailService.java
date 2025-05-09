@@ -118,7 +118,7 @@ public class EmailService {
         mimeMessageHelper.setTo(email);
         mimeMessageHelper.setSubject("Transfer Status Update");
 
-        String template = templateEngine.process(EmailTemplateName.STATUS_UPDATE.getName(), context);
+        String template = templateEngine.process(EmailTemplateName.STATUS_CHANGE.getName(), context);
 
         mimeMessageHelper.setText(template, true);
 
