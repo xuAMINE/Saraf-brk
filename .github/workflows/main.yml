@@ -138,5 +138,6 @@ jobs:
           docker pull ${{ secrets.DOCKERHUB_USERNAME }}/srf-api:latest
           docker stop srf-container || true
           docker rm srf-container || true
+          docker system prune -a --volumes -f
           docker run --pull always --env-file ~/.env -d --name srf-container -p 8088:8088 ${{ secrets.DOCKERHUB_USERNAME }}/srf-api:latest
           EOF
